@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.4
+// @version      0.5
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -312,6 +312,9 @@ bot.selectEnemy = function(){
         var hits = Math.ceil(bot.enemy.health / bot.minDamage);
         bot.log("Fighting " + bot.enemy.name + " [" + bot.enemy.health + " HP] [" + hits + " Est]");
         bot.target.click();
+    } else if (bot.btn[bot.action.nothing_nearby]) {
+        bot.log("Searching for enemies");
+        bot.doAction(bot.action.nothing_nearby);
     }
     bot.inBattle = true;
 };
