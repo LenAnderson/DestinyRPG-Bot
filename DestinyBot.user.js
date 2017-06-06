@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.5
+// @version      0.6
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -196,7 +196,11 @@ var enemies = {
     "Mormu, Xol Spawn"          : 4,
 
     /* Strong cunt, Might as well be boss*/
-    "Ogre"                      : 4
+    "Ogre"                      : 4,
+    
+    /* Chests, caches, ... */
+    "Material Cache"            : 10,
+    "Chest"                     : 10
 };
 
 bot.isReady = function(){
@@ -245,12 +249,12 @@ bot.attack = function(){
         bot.doAction(bot.action.back_to_patrol);
     }
     // Run if low health
-    else if( bot.btn[ bot.action.run_away ] && bot.health < ((bot.run_at / 100) * bot.maxHealth) ){
+    else if( bot.btn[ bot.action.run_away ] && (bot.health < (bot.run_at / 100) * bot.maxHealth || bot.health < bot.enemy.damage * 1.1) ){
         bot.log("Low health, Running like hell.");
         bot.doAction(bot.action.run_away);
     }
     // Heal if possible at less than x% health
-    else if(bot.btn[ bot.action.take_cover ] && bot.health < ((bot.cover_at / 100) * bot.maxHealth) ){
+    else if(bot.btn[ bot.action.take_cover ] && bot.health < (bot.cover_at / 100) * bot.maxHealth ){
         bot.log("Healing under cover");
         bot.doAction(bot.action.take_cover);
     }
@@ -260,31 +264,32 @@ bot.attack = function(){
         bot.doAction(bot.action.nothing_nearby);
     }
     // Run Away
-    else if( bot.btn[ bot.action.run_away ] && enemies[bot.enemy.name] == -1 ){
+    else if( bot.btn[bot.action.run_away] && enemies[bot.enemy.name] == -1 ){
         bot.log("Running away from " + bot.enemy.name);
         bot.doAction(bot.action.run_away);
     }
     // Ultra Attack
-    else if( bot.btn[ bot.action.u_attack ] && enemies[bot.enemy.name] <= 4 && bot.enemy.health >= 1000 ){
+    else if( (bot.btn[bot.action.u_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 4 && bot.enemy.health >= 1000 ){
         bot.log("ULTRA ATTACK!");
-        if(bot.enemy.name != 'chest') bot.doAction(bot.action.u_attack);
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.u_attack);
         else bot.doAction(bot.action.kick_it);
     }
     // Heavy Attack
-    else if( bot.btn[ bot.action.h_attack ] && enemies[bot.enemy.name] <= 3 && bot.enemy.health >= 400){
+    else if( (bot.btn[bot.action.h_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 3 && bot.enemy.health >= 400){
         bot.log("Heavy Attack");
-        bot.doAction(bot.action.h_attack);
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.h_attack);
+        else bot.doAction(bot.action.kick_it);
     }
     // Special Attack
-    else if( bot.btn[ bot.action.s_attack ] && enemies[bot.enemy.name] <= 2 && bot.enemy.health >= 150){
+    else if( (bot.btn[bot.action.s_attack] || bot.btn[bot.action.smack_it]) && enemies[bot.enemy.name] >= 2 && bot.enemy.health >= 150){
         bot.log("Special Attack");
-        if(bot.enemy.name != 'chest') bot.doAction(bot.action.s_attack);
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.s_attack);
         else bot.doAction(bot.action.smack_it);
     }
     // Regular Attack
-    else if( bot.btn[ bot.action.r_attack ] ){
+    else if( (bot.btn[bot.action.r_attack] || bot.btn[bot.action.smack_it]) ){
         bot.log("Regular Attack");
-        if(bot.enemy.name != 'chest') bot.doAction(bot.action.r_attack);
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.r_attack);
         else bot.doAction(bot.action.hit_it);
     } else {
         bot.log('fuck');
