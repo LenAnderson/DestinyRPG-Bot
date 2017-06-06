@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.3
+// @version      0.4
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -28,8 +28,8 @@ bot.href            = window.location.href;
 bot.interval        = 1000;
 bot.delay           = 0;
 
-bot.cover_at        = 90;   // 90% or less
-bot.run_at          = 250;  // 250hp or less
+bot.cover_at        = 50;   // 90% HP or less
+bot.run_at          = 20;  // 20% HP or less
 
 bot.runAway         = false;
 
@@ -245,7 +245,7 @@ bot.attack = function(){
         bot.doAction(bot.action.back_to_patrol);
     }
     // Run if low health
-    else if( bot.btn[ bot.action.run_away ] && bot.health < bot.run_at ){
+    else if( bot.btn[ bot.action.run_away ] && bot.health < ((bot.run_at / 100) * bot.maxHealth) ){
         bot.log("Low health, Running like hell.");
         bot.doAction(bot.action.run_away);
     }
