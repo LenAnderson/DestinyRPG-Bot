@@ -196,6 +196,7 @@ var enemies = {
     "Mormu, Xol Spawn"          : 4,
     "Aksor, Archon Priest"      : 4,
     "Kaliks Reborn"             : 4,
+    "War Mech"                  : 4,
 
     /* Strong cunt, Might as well be boss*/
     "Ogre"                      : 4,
