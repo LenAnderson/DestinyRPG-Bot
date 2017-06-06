@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.8
+// @version      0.9
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -194,6 +194,8 @@ var enemies = {
     "Kovik, Splicer Priest"     : 4,
     "Sepiks Prime"              : 4,
     "Mormu, Xol Spawn"          : 4,
+    "Aksor, Archon Priest"      : 4,
+    "Kaliks Reborn"             : 4,
 
     /* Strong cunt, Might as well be boss*/
     "Ogre"                      : 4,
@@ -268,26 +270,26 @@ bot.attack = function(){
         bot.log("Running away from " + bot.enemy.name);
         bot.doAction(bot.action.run_away);
     }
-    // Ultra Attack
-    else if( (bot.btn[bot.action.u_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 4 && bot.enemy.health >= 1000 ){
+    // Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
+    else if ((bot.btn[bot.action.u_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 4 && (bot.enemy.shield > 0 || bot.enemy.health > bot.minDamage*4)) {
         bot.log("ULTRA ATTACK!");
         if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.u_attack);
         else bot.doAction(bot.action.kick_it);
     }
-    // Heavy Attack
-    else if( (bot.btn[bot.action.h_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 3 && bot.enemy.health >= 400){
-        bot.log("Heavy Attack");
-        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.h_attack);
+    // Heavy Attack -- bosses only, must have shield or more HP than twice our min damage
+    else if ((bot.btn[bot.action.h_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 4 && (bot.enemy.shield > 0 || bot.enemy.health > bot.minDamage*2)) {
+        bot.log("ULTRA ATTACK!");
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.u_attack);
         else bot.doAction(bot.action.kick_it);
     }
-    // Special Attack
-    else if( (bot.btn[bot.action.s_attack] || bot.btn[bot.action.smack_it]) && enemies[bot.enemy.name] >= 2 && bot.enemy.health >= 150){
+    // Special Attack -- only on shields
+    else if ((bot.btn[bot.action.s_attack] || bot.btn[bot.action.smack_it]) && bot.enemy.shield > 0) {
         bot.log("Special Attack");
         if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.s_attack);
         else bot.doAction(bot.action.smack_it);
     }
     // Regular Attack
-    else if( (bot.btn[bot.action.r_attack] || bot.btn[bot.action.smack_it]) ){
+    else if (bot.btn[bot.action.r_attack] || bot.btn[bot.action.smack_it]) {
         bot.log("Regular Attack");
         if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.r_attack);
         else bot.doAction(bot.action.hit_it);
