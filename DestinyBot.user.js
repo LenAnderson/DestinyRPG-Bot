@@ -1,9 +1,11 @@
 // ==UserScript==
 // @name         DestinyRPG 2.0
+// @namespace    https://github.com/LenAnderson/
+// @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.1
-// @author       TryHardHusky
-// @match        https://destinyrpg.com/game/*
+// @version      0.2
+// @author       TryHardHusky, LenAnderson
+// @match        https://game.destinyrpg.com/*
 // @grant        none
 // ==/UserScript==
 
