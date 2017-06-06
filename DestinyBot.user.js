@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.2
+// @version      0.3
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -402,7 +402,7 @@ bot.getEnemyState = function(){
 
 bot.getHealth = function(){
     if(!bot.inBattle) return 0;
-    return parseInt($(bot._getWhiteText()[0]).text().trim().split('You')[1].split('/')[0].trim().replace(',',''));
+    return parseInt($(bot._getWhiteText()[0]).text().trim().replace(/^.+?(\d+) \/ (\d+) HP.*$/, '$1'));
 };
 
 bot.getArea = function(){
