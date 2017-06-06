@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.9
+// @version      0.10
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -279,8 +279,8 @@ bot.attack = function(){
     }
     // Heavy Attack -- bosses only, must have shield or more HP than twice our min damage
     else if ((bot.btn[bot.action.h_attack] || bot.btn[bot.action.kick_it]) && enemies[bot.enemy.name] >= 4 && (bot.enemy.shield > 0 || bot.enemy.health > bot.minDamage*2)) {
-        bot.log("ULTRA ATTACK!");
-        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.u_attack);
+        bot.log("Heavy Attack");
+        if(bot.enemy.name.search(/chest|cache/i) == -1) bot.doAction(bot.action.h_attack);
         else bot.doAction(bot.action.kick_it);
     }
     // Special Attack -- only on shields
