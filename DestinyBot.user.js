@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.6
+// @version      0.7
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -370,7 +370,7 @@ bot.updateButtons = function(){
     bot.btn         = {};
     bot.targets     = {};
 
-    $('.item-inner').each(function(i,v){
+    $('page-on-center .item-inner').each(function(i,v){
         var title = $(v).find('.item-title').text().trim();
         if(title !== ''){
             var spl = title.split('(')[0].trim();
