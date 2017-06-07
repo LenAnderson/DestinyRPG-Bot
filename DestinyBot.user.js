@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.10
+// @version      0.11
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -356,7 +356,7 @@ bot.getEnemyInfo = function(){
     if(!bot.inBattle) return;
     bot.enemy.health    = parseInt(bot.getEnemyHealth(bot.enemy.name));
     bot.enemy.damage    = parseInt(bot._getRedText());
-    bot.enemy.shield    = parseInt(bot.getEnemyShield());
+    bot.enemy.shield    = parseInt(bot.getEnemyShield(bot.enemy.name));
     bot.enemy.enraged   = bot.getEnemyState();
 
     bot.lastDamage      = parseInt(bot._getGreenText());
@@ -425,7 +425,7 @@ bot.validEnemy = function(name){
 };
 
 bot.getEnemyShield = function(name){
-    if(bot.validEnemy(name)) return parseInt($(bot._getWhiteText()[1]).text().trim().split(name)[1].split('Shield')[0].trim());
+    if(bot.validEnemy(name)) return parseInt($(bot._getWhiteText()[1]).text().trim().replace(/^.*?(-?\d+)\s*Shield.*$/, '$1'));
     else return 0;
 };
 
@@ -452,14 +452,14 @@ bot._getGreenText = function(){
 };
 
 bot._getWhiteText = function(){
-    return bot._getText('#FFFFFF', "rgb(255, 255, 255)", 'white', 'span', 'HP');
+    return bot._getText('#FFFFFF', "rgb(255, 255, 255)", 'white', 'span', /HP|Shield/);
 };
 
 bot._getText = function(h, r, c, element, io){
     io = io || false;
     return $(element).filter(function(){
         var co = $(this).css('color');
-        if(io !== false) return (co === h || co === r || co === c) && $(this).text().indexOf(io) > -1;
+        if(io !== false) return (co === h || co === r || co === c) && $(this).text().search(io) > -1;
         else return co === h || co === r || co === c;
     });
 };
