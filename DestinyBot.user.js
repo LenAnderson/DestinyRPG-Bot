@@ -25,7 +25,7 @@ bot.lp              = 0;
 bot.old_page        = window.location.href;
 bot.href            = window.location.href;
 
-bot.interval        = 1000;
+bot.interval        = 300;  // speed things up
 bot.delay           = 0;
 
 bot.cover_at        = 50;   // 90% HP or less
@@ -159,8 +159,8 @@ var enemies = {
     /* SKIP */
     "Colossus"                  : -1,
 
-    /* REGULAR */
-    "Hobgoblin"                 : 1,
+    /* REGULAR */                         // every nummber in this list can be added to fit your level. 
+    "Hobgoblin"                 : 1,              
     "Harpy"                     : 1,
     "Hydra"                     : 1,
     "Chest"                     : 1,
@@ -179,6 +179,11 @@ var enemies = {
     "Acolyte"                   : 1,
     "Knight"                    : 1,
     "Captain"                   : 1,
+    "Hezen Protective"          : 2,
+    "Hezen Corrective"          : 2,
+    "Golgorth"                  : 2, 
+    "Krughor"                   : 2,
+    "Vorlog"                    : 2,
 
     /* SPECIAL */
     "Legionary"                 : 2,
@@ -199,11 +204,14 @@ var enemies = {
     "War Mech"                  : 4,
 
     /* Strong cunt, Might as well be boss*/
-    "Ogre"                      : 4,
+    "Ogre"                      : 3,
     
     /* Chests, caches, ... */
     "Material Cache"            : 10,
-    "Chest"                     : 10
+    "Chest"                     : 10,
+    "Core Box"                  : 10,
+    "Engram Cache"              : 10
+    
 };
 
 bot.isReady = function(){
