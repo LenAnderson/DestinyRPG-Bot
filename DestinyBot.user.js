@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.11
+// @version      0.12
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -159,8 +159,8 @@ var enemies = {
     /* SKIP */
     "Colossus"                  : -1,
 
-    /* REGULAR */                         // every nummber in this list can be added to fit your level. 
-    "Hobgoblin"                 : 1,              
+    /* REGULAR */               // every nummber in this list can be added to fit your level. 
+    "Hobgoblin"                 : 1,
     "Harpy"                     : 1,
     "Hydra"                     : 1,
     "Chest"                     : 1,
