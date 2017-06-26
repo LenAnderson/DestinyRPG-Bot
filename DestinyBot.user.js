@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.14
+// @version      0.15
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -95,7 +95,12 @@ bot.zones = {
         "Archer's Line",
         "Anchor of Light",
         "Hellmouth",
-        "The Gatehouse"
+        "The Gatehouse",
+        "Circle of Bones",
+        "Summoning Pits",
+        "The Stills",
+        "Oversoul Throne",
+        "The World's Grave"
     ],
     "Venus" : [
         "Shattered Coast",
@@ -109,7 +114,10 @@ bot.zones = {
         "Scablands",
         "The Hollows",
         "Firebase Rubicon",
-        "Rubicon Wastes"
+        "Rubicon Wastes",
+        "The Buried City",
+        "Freehold Station",
+        "Tharsis Junction"
     ],
     "Fundament" : [
         "Bone Plaza",
@@ -117,10 +125,38 @@ bot.zones = {
     ],
     "Dreadnaught" : [
         "Altar of Oryx",
+        "The Hanging Crypts",
+        "Trenchway",
         "Court of Oryx",
+        "The Bridge",
         "Dantalion Exodus VI",
+        "The Narthex",
         "Hull Breach",
-        "Mausoleum"
+        "The Founts",
+        "Mausoleum",
+        "Hall of Souls",
+        "The Asylum"
+    ],
+    "Phobos" : [
+        "Black Shield",
+        "Cliffside",
+        "Firebase Thuria",
+        "Skyburner Keep",
+        "Aerodrome"
+    ],
+    "Mercury" : [
+        "Caloris Spires",
+        "Dark Cliffs",
+        "Fulur Visis",
+        "Vertigo",
+        "Fields of Glass",
+        "Languid Sea"
+    ],
+    "Europa" : [
+        "Frozen Void",
+        "Glacier Native",
+        "Magus Ruins",
+        "Monument of Loss"
     ]
 };
 
@@ -128,16 +164,16 @@ bot.attacks = {
     'Regular Attack'    : { hard : 1 },
     'Special Attack'    : { hard : 2, ammo : 100 },
     'Heavy Attack'      : { hard : 3, ammo : 100 },
-    'Golden Gun'        : { hard : 4 },
-    'Arc Blade'         : { hard : 4 },
-    'Shadowshot'        : { hard : 4 }
+    'Fist of Havoc'     : { hard : 4 },
+    'Ward of Dawn'      : { hard : 4 },
+    'Hammer of Sol'     : { hard : 4 }
 };
 
 bot.action = {
     r_attack            : 'Regular Attack',
     s_attack            : 'Special Attack',
     h_attack            : 'Heavy Attack',
-    u_attack            : 'Golden Gun',
+    u_attack            : 'Fist of Havoc',
 
     hit_it              : 'Hit it',
     smack_it            : 'Smack it',
@@ -183,11 +219,18 @@ var enemies = {
     "Acolyte"                   : 1,
     "Knight"                    : 1,
     "Captain"                   : 1,
+    "Cabal Champions"           : 1,
+    "Sol Progeny"               : 1,
+    "Overmind Minotaur"         : 1,
+    "Prohibitive Mind"          : 2,
+    "The Gorgons"               : 2,
     "Hezen Protective"          : 2,
     "Hezen Corrective"          : 2,
     "Golgorth"                  : 2, 
     "Krughor"                   : 2,
     "Vorlog"                    : 2,
+    "Kagoor"                    : 2,
+    
 
     /* SPECIAL */
     "Legionary"                 : 2,
@@ -200,21 +243,27 @@ var enemies = {
     "Draksis"                   : 3,
     "Valus Tlu'urn"             : 4,
     "Valus Mau'ual"             : 4,
+    "Bracus Tha'aurn"           : 4,
     "Kovik, Splicer Priest"     : 4,
     "Sepiks Prime"              : 4,
     "Mormu, Xol Spawn"          : 4,
     "Aksor, Archon Priest"      : 4,
     "Kaliks Reborn"             : 4,
     "War Mech"                  : 4,
+    "Primus Ta'aun"             : 4,
+    "Keksis the Betrayed"       : 4,
+    "Atheon, Time's Conflux"    : 4,
+    "Qodron, Gate Lord"         : 4,
 
     /* Strong cunt, Might as well be boss*/
     "Ogre"                      : 3,
     
     /* Chests, caches, ... */
-    "Material Cache"            : 10,
-    "Chest"                     : 10,
-    "Core Box"                  : 10,
-    "Engram Cache"              : 10
+    "Material Cache"            : 9,
+    "Chest"                     : 9,
+    "Core Box"                  : 9,
+    "Engram Cache"              : 9,
+    "Adv Core Box"              : 10
     
 };
 
