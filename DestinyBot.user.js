@@ -3,7 +3,7 @@
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
-// @version      0.12
+// @version      0.13
 // @author       TryHardHusky, LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        none
@@ -52,6 +52,9 @@ bot.damages.ultra       = 0;
 // TODO: Localstorage values
 bot.minDamage       = 100; // For predicting insta-kills
 bot.maxDamage       = 0;
+
+bot.scanForChestThreshold = 15;
+bot.scannedForChest = 0;
 
 bot.ready           = false;
 
@@ -144,7 +147,8 @@ bot.action = {
     run_away            : 'Run Away',
     take_cover          : 'Take Cover',
     back_to_patrol      : 'Back to patrolling...',
-    nothing_nearby      : 'Nothing nearby...'
+    nothing_nearby      : 'Nothing nearby...',
+    look_around         : 'Look around...'
 };
 
 bot.attackString = {
@@ -324,10 +328,14 @@ bot.selectEnemy = function(){
         }
     });
 
-    if(bot.target){
+    if(bot.target && (bot.enemy.name.search(/chest|cache/i) == 1 || ++bot.scannedForChest > bot.scanForChestThreshold)){
+        bot.scannedForChest = 0;
         var hits = Math.ceil(bot.enemy.health / bot.minDamage);
         bot.log("Fighting " + bot.enemy.name + " [" + bot.enemy.health + " HP] [" + hits + " Est]");
         bot.target.click();
+    } else if (bot.btn[bot.action.look_around]) {
+        bot.log("Searching for chests");
+        bot.doAction(bot.action.look_around);
     } else if (bot.btn[bot.action.nothing_nearby]) {
         bot.log("Searching for enemies");
         bot.doAction(bot.action.nothing_nearby);
