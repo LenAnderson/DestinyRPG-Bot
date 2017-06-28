@@ -15,8 +15,8 @@ class PatrolStage extends Stage {
 			type: (a.$('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 		}});
 		this.targets.sort(function(a,b)  {
-			if (a.type == 'chest' && b.type != 'chest') return -1;
-			if (a.type != 'chest' && b.type == 'chest') return 1;
+			if (a.type == 'currency' && b.type != 'currency') return -1;
+			if (a.type != 'currency' && b.type == 'currency') return 1;
 			if (a.shield > b.shield) return -1;
 			if (a.shield < b.shield) return 1;
 			if (a.health > b.health) return -1;

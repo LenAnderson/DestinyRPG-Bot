@@ -43,8 +43,7 @@ class Enemy {
 	get boss() {
 		switch (this.type) {
 			case 'normal':
-			case 'chest':
-			case 'cache':
+			case 'currency':
 				return false;
 			default:
 				return true;
