@@ -6,6 +6,7 @@
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
+// @grant        unsafeWindow
 // ==/UserScript==
 
 (function() {
@@ -92,6 +93,9 @@ let $$ = document.querySelectorAll.bind(document);
 // HTMLCollection.prototype.toArray = Array.prototype.slice;
 // NodeList.prototype.toArray = Array.prototype.slice;
 // NamedNodeMap.prototype.toArray = Array.prototype.slice;
+function toArray(collection) {
+	return Array.prototype.slice.call(collection);
+}
 
 // Node.prototype.replace = function(el) {
 	// this.parentNode.replaceChild(el, this);
@@ -123,8 +127,17 @@ function random(min, max) {
 	return Math.floor(Math.random()*range) + min;
 }
 
-function toArray(collection) {
-	return Array.prototype.slice.call(collection);
+function click(el) {
+	if (el == null) return;
+	el.scrollIntoViewIfNeeded();
+	let rect = el.getBoundingClientRect();
+	let x = random(Math.max(0, rect.left), Math.min(innerWidth, rect.right));
+	let y = random(Math.max(0, rect.top), Math.min(innerHeight, rect.bottom));
+	['mouseover', 'mousedown', 'mouseup', 'click'].forEach((name) => {
+		let evt = document.createEvent('MouseEvents');
+		evt.initMouseEvent(name, true, true, unsafeWindow, 1, x,y, x,y, false, false, false, false, 0, null);
+		el.dispatchEvent(evt);
+    });
 }
 	class UI {
 	get page() {
@@ -290,21 +303,21 @@ class PatrolStage extends Stage {
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
 			log.log('Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
 			this.enemy.type = target.type;
-			target.el.click();
+			click(target.el);
 		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
 			let modalConfirm = $('.actions-modal-button');
 			if (modalConfirm) {
-				modalConfirm.click();
+				click(modalConfirm);
 			} else {
-				(this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el.click();
+				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 			}
 		}
 		// look around for enemies
 		else {
 			log.log('Searching for enemies');
-			this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]').click();
+			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}
 	}
 }
@@ -343,7 +356,7 @@ class BattleStage extends Stage {
 			this.attack();
 		} else {
 			log.log('Battle ended');
-			this.actions.run.click();
+			click(this.actions.run);
 		}
 	}
 	
@@ -351,32 +364,32 @@ class BattleStage extends Stage {
 		// run if low on health
 		if (this.actions.run && (this.player.health < (prefs.runAt / 100) * this.player.maxHealth || this.player.health < this.enemy.damage * 1.1)) {
 			log.log('Low health. Running like hell.');
-			this.actions.run.click();
+			click(this.actions.run);
 		}
 		// heal if possible at less than x% health
 		else if (this.actions.cover && this.player.health < (prefs.coverAt / 100) * this.player.maxHealth) {
 			log.log('Healing under cover.');
-			this.actions.cover.click();
+			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
 		else if (this.actions.super && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
 			log.log('ULTRA ATTACK!');
-			this.actions.super.click();
+			click(this.actions.super);
 		}
 		// Heavy Attack -- bosses only, must have shield or more HP than four times our min damage
 		else if (this.actions.heavy && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
 			log.log('Heavy Attack');
-			this.actions.heavy.click();
+			click(this.actions.heavy);
 		}
 		// Special Attack -- only on shields
 		else if (this.actions.special && this.enemy.shield > 0) {
 			log.log('Special Attack');
-			this.actions.special.click();
+			click(this.actions.special);
 		}
 		// Regular Attack
 		else if (this.actions.attack) {
 			log.log('Regular Attack');
-			this.actions.attack.click();
+			click(this.actions.attack);
 		} else {
 			log.warn('fuck');
 		}

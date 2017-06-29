@@ -33,7 +33,7 @@ class BattleStage extends Stage {
 			this.attack();
 		} else {
 			log.log('Battle ended');
-			this.actions.run.click();
+			click(this.actions.run);
 		}
 	}
 	
@@ -41,32 +41,32 @@ class BattleStage extends Stage {
 		// run if low on health
 		if (this.actions.run && (this.player.health < (prefs.runAt / 100) * this.player.maxHealth || this.player.health < this.enemy.damage * 1.1)) {
 			log.log('Low health. Running like hell.');
-			this.actions.run.click();
+			click(this.actions.run);
 		}
 		// heal if possible at less than x% health
 		else if (this.actions.cover && this.player.health < (prefs.coverAt / 100) * this.player.maxHealth) {
 			log.log('Healing under cover.');
-			this.actions.cover.click();
+			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
 		else if (this.actions.super && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
 			log.log('ULTRA ATTACK!');
-			this.actions.super.click();
+			click(this.actions.super);
 		}
 		// Heavy Attack -- bosses only, must have shield or more HP than four times our min damage
 		else if (this.actions.heavy && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
 			log.log('Heavy Attack');
-			this.actions.heavy.click();
+			click(this.actions.heavy);
 		}
 		// Special Attack -- only on shields
 		else if (this.actions.special && this.enemy.shield > 0) {
 			log.log('Special Attack');
-			this.actions.special.click();
+			click(this.actions.special);
 		}
 		// Regular Attack
 		else if (this.actions.attack) {
 			log.log('Regular Attack');
-			this.actions.attack.click();
+			click(this.actions.attack);
 		} else {
 			log.warn('fuck');
 		}

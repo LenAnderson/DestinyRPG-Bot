@@ -50,21 +50,21 @@ class PatrolStage extends Stage {
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
 			log.log('Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
 			this.enemy.type = target.type;
-			target.el.click();
+			click(target.el);
 		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
 			let modalConfirm = $('.actions-modal-button');
 			if (modalConfirm) {
-				modalConfirm.click();
+				click(modalConfirm);
 			} else {
-				(this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el.click();
+				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 			}
 		}
 		// look around for enemies
 		else {
 			log.log('Searching for enemies');
-			this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]').click();
+			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}
 	}
 }

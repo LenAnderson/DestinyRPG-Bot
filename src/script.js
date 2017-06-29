@@ -6,6 +6,7 @@
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
+// @grant        unsafeWindow
 // ==/UserScript==
 
 (function() {
