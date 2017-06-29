@@ -8,6 +8,8 @@ class Bot {
 	constructor() {
 		this.ui = new UI();
 		
+		this.paused = false;
+		
 		this.player = new Player(this.ui);
 		this.enemy = new Enemy(this.ui);
 		
@@ -40,6 +42,8 @@ class Bot {
 	}
 	
 	update() {
+		if (this.paused) return;
+		
 		this.player.update();
 		this.enemy.update();
 		
@@ -47,5 +51,12 @@ class Bot {
 		this.stage.go();
 		
 		setTimeout(this.update.bind(this), prefs.updateInterval*1 + random(prefs.updateIntervalRange*(-1), prefs.updateIntervalRange*1));
+	}
+	pause() {
+		this.paused = true;
+	}
+	unpause() {
+		this.paused = false;
+		this.update();
 	}
 }

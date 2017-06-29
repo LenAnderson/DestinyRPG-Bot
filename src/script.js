@@ -6,6 +6,7 @@
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
+// @grant        GM_unregisterMenuCommand
 // @grant        unsafeWindow
 // ==/UserScript==
 
@@ -20,4 +21,16 @@
 	
 	let prefsGUI = new PrefsGUI();
 	GM_registerMenuCommand('[DRB] Preferences', prefsGUI.show.bind(prefsGUI));
+	let cmdPause = GM_registerMenuCommand('[DRP] Pause Bot', pause);
+	let cmdUnpause;
+	function pause() {
+		bot.pause();
+		GM_unregisterMenuCommand(cmdPause);
+		cmdUnpause = GM_registerMenuCommand('[DRP] Unpause Bot', unpause);
+	}
+	function unpause() {
+		bot.unpause();
+		GM_unregisterMenuCommand(cmdUnpause);
+		cmdPause = GM_registerMenuCommand('[DRP] Pause Bot', pause);
+	}
 })();
