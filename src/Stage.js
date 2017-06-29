@@ -8,4 +8,8 @@ class Stage {
 	go() {
 		log.error('Stage.go', 'is not implemented');
 	}
+	
+	reset() {
+		log.error('Stage.reset', 'is not implemented');
+	}
 }

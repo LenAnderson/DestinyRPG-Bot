@@ -15,7 +15,7 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.$('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
+			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
 			this.health = parseInt(parts[1]);
 			this.maxHealth = parseInt(parts[2]);
 		}
@@ -23,7 +23,7 @@ class Player {
 	
 	updateDamage() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = this.ui.page.$$('#console > strong').toArray().find(it=>{return getComputedStyle(it).color == 'rgb(50, 205, 50)';});
+			let el = toArray(this.ui.page.querySelectorAll('#console > strong')).find(it=>{return getComputedStyle(it).color == 'rgb(50, 205, 50)';});
 			if (el) {
 				let parts = el.textContent.replace(/,/g, '').match(/.*?(\d+).*$/, '$1');
 				let dam = (parts[1]*1) || 0;

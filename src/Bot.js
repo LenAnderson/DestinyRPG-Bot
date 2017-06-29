@@ -11,7 +11,12 @@ class Bot {
 		this.player = new Player(this.ui);
 		this.enemy = new Enemy(this.ui);
 		
-		this.stage = new Stage(this.ui, this.player, this.enemy);
+		this.stages = {
+			'default': new Stage(this.ui, this.player, this.enemy)
+		};
+		this.stages[config.stage.patrol] = new PatrolStage(this.ui, this.player, this.enemy);
+		this.stages[config.stage.battle] = new BattleStage(this.ui, this.player, this.enemy);
+		this.stageId = 'default';
 		
 		this.update();
 	}
@@ -20,22 +25,27 @@ class Bot {
 		this.player.update();
 	}
 	
+	get stage() {
+		return this.stages[this.stageId];
+	}
+	set stage(stageId) {
+		if (this.stages[stageId]) {
+			if (this.stageId != stageId) {
+				this.stageId = stageId;
+				this.stage.reset();
+			}
+		} else {
+			this.stageId = 'default';
+		}
+	}
+	
 	update() {
 		this.player.update();
 		this.enemy.update();
 		
-		switch (this.ui.stage) {
-			case config.stage.patrol:
-				this.stage = new PatrolStage(this.ui, this.player, this.enemy);
-				break;
-			case config.stage.battle:
-				this.stage = new BattleStage(this.ui, this.player, this.enemy);
-				break;
-			default:
-				this.stage = new Stage(this.ui, this.player, this.enemy);
-		}
+		this.stage = this.ui.stage;
 		this.stage.go();
 		
-		setTimeout(this.update.bind(this), prefs.updateInterval);
+		setTimeout(this.update.bind(this), prefs.updateInterval*1 + random(prefs.updateIntervalRange*(-1), prefs.updateIntervalRange*1));
 	}
 }

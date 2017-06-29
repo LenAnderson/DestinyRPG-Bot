@@ -2,23 +2,30 @@ ${include-once: ../Stage.js}
 class PatrolStage extends Stage {
 	constructor(ui, player, enemy) {
 		super(ui, player, enemy);
-		
+	}
+	
+	reset() {
 		this.targets = [];
+		this.scanned = 0;
 	}
 	
 	updateTargets() {
-		this.targets = this.ui.page.$$('.page-content > .list-block > ul > li > a[href^="battle.php"]').toArray().map((a) => { return {
+		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a[href^="battle.php"]')).map((a) => { return {
 			el: a,
-			name: a.$('.item-content > .item-inner > .item-title').textContent.trim(),
-			health: a.$('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*HP.*$/, '$1')*1 || 0,
-			shield: a.$('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*SH.*$/, '$1')*1 || 0,
-			type: (a.$('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
+			name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
+			health: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*HP.*$/, '$1')*1 || 0,
+			shield: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*SH.*$/, '$1')*1 || 0,
+			// types: currency, ultra, ?
+			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 		}});
 		this.targets.sort(function(a,b)  {
+			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
 			if (a.type != 'currency' && b.type == 'currency') return 1;
+			// prioritize high shield
 			if (a.shield > b.shield) return -1;
 			if (a.shield < b.shield) return 1;
+			// prioritize high health
 			if (a.health > b.health) return -1;
 			if (a.health < b.health) return 1;
 			return 0;
@@ -26,7 +33,7 @@ class PatrolStage extends Stage {
 	}
 	
 	updateLuckyDay() {
-		this.luckyDay = this.ui.page.$$('.button.luckyday').toArray().map((btn) => {return {
+		this.luckyDay = toArray(this.ui.page.querySelectorAll('.button.luckyday')).map((btn) => {return {
 			el: btn,
 			type: btn.getAttribute('data-type').toLowerCase()
 		}});
@@ -57,7 +64,7 @@ class PatrolStage extends Stage {
 		// look around for enemies
 		else {
 			log.log('Searching for enemies');
-			this.ui.page.$('.page-content > .list-block > ul > li > a.nothinglink[href="#"]').click();
+			this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]').click();
 		}
 	}
 }

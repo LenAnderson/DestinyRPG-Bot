@@ -2,7 +2,9 @@ ${include-once: ../Stage.js}
 class BattleStage extends Stage {
 	constructor(ui, player, enemy) {
 		super(ui, player, enemy);
-		
+	}
+	
+	reset() {
 		this.actions = {
 			attack: null,
 			special: null,
@@ -15,12 +17,12 @@ class BattleStage extends Stage {
 	
 	updateActions() {
 		this.actions = {
-			attack: this.ui.page.$('.attacklink'),
-			special: this.ui.page.$('.speciallink'),
-			heavy: this.ui.page.$('.heavylink'),
-			super: this.ui.page.$('.superlink'),
-			cover: this.ui.page.$('.coverlink'),
-			run: this.ui.page.$('.runlink')
+			attack: this.ui.page.querySelector('.attacklink'),
+			special: this.ui.page.querySelector('.speciallink'),
+			heavy: this.ui.page.querySelector('.heavylink'),
+			super: this.ui.page.querySelector('.superlink'),
+			cover: this.ui.page.querySelector('.coverlink'),
+			run: this.ui.page.querySelector('.runlink')
 		};
 	}
 	

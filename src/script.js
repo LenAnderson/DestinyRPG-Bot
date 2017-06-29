@@ -5,16 +5,18 @@
 // @version      1.0
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
-// @grant        none
+// @grant        GM_registerMenuCommand
 // ==/UserScript==
 
 (function() {
 	${include-once: config.js}
 	${include-once: prefs.js}
+	${include-once: PrefsGUI.js}
 	${include-once: helpers.js}
 	${include-once: Bot.js}
 	
 	let bot = new Bot();
 	
-	unsafeWindow.bot = bot;
+	let prefsGUI = new PrefsGUI();
+	GM_registerMenuCommand('[DRB] Preferences', prefsGUI.show.bind(prefsGUI));
 })();

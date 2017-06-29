@@ -1,0 +1,53 @@
+<style>
+	${include: ../css/prefs.css}
+</style>
+
+<h1>DestinyRPG Bot - Preferences</h1>
+
+<p>
+	<small>
+		<strong>Preferences are currently not saved.</strong><br>
+		Saving them to <code>localStorage</code>, as a Cookie, other other places easily 
+		accessible from JavaScript would also make them detectable by the game's code.<br>
+		If you have a good idea to implement saving the preferences let me know :)
+	</small>
+</p>
+
+<section>
+	<p>
+		<label for="updateInterval">Update Interval (ms)</label>
+		<input type="number" min="1" max="10000" id="updateInterval">
+	</p>
+	<p>
+		<label for="updateIntervalRange">Update Interval Range (±ms)</label>
+		<input type="number" min="1" max="10000" id="updateIntervalRange">
+	</p>
+</section>
+
+<section>
+	<h2>Patrol</h2>
+	<p>
+		<label for="luckyDay">Lucky Day Bonus</label>
+		<select id="luckyDay">
+			<option value="xp">XP</option>
+			<option value="lp">LP</option>
+			<option value="glimmer">Glimmer</option>
+		</select>
+</section>
+
+<section>
+	<h2>Battle</h2>
+	<p>
+		<label for="coverAt">Take Cover At (% max health)</label>
+		<input type="number" min="1" max="99" id="coverAt">
+	</p>
+	<p>
+		<label for="runAt">Run Away At (% max health)</label>
+		<input type="number" min="1" max="99" id="runAt">
+	</p>
+</section>
+
+<section class="actions">
+	<button id="save">Save</button>
+	<button id="cancel">Cancel</button>
+</section>
