@@ -46,8 +46,7 @@ class PrefsGUI {
 					break;
 			}
 		});
-		// don't save to localStorage to avoid detection
-		// maybe we could save to another site (e.g. GitHub Gist)?
+		GM_setValue('drb_prefs', JSON.stringify(prefs));
 		this.close();
 	}
 	close() {

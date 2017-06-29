@@ -7,6 +7,8 @@
 // @match        https://game.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @grant        GM_setValue
+// @grant        GM_getValue
 // @grant        unsafeWindow
 // ==/UserScript==
 
