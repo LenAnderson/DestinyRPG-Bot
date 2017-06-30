@@ -13,12 +13,13 @@ class BattleStage extends Stage {
 	
 	updateActions() {
 		this.actions = {
-			attack: this.ui.page.querySelector('.attacklink'),
-			special: this.ui.page.querySelector('.speciallink'),
-			heavy: this.ui.page.querySelector('.heavylink'),
-			super: this.ui.page.querySelector('.superlink'),
-			cover: this.ui.page.querySelector('.coverlink'),
-			run: this.ui.page.querySelector('.runlink')
+			attack: this.ui.page.querySelector('#actions .attacklink'),
+			special: this.ui.page.querySelector('#actions .speciallink'),
+			heavy: this.ui.page.querySelector('#actions .heavylink'),
+			super: this.ui.page.querySelector('#actions .superlink'),
+			cover: this.ui.page.querySelector('#actions .coverlink'),
+			run: this.ui.page.querySelector('#actions .runlink'),
+			respawn: this.ui.page.querySelector('#actions a[href*="index.php"]')
 		};
 	}
 	
@@ -27,6 +28,12 @@ class BattleStage extends Stage {
 		
 		if (this.actions.attack) {
 			this.attack();
+		} else if (this.player.health < 0) {
+			this.player.died = true;
+			log.log('💀 You are dead!');
+			if (this.actions.respawn) {
+				click(this.actions.respawn);
+			}
 		} else {
 			log.log('Battle ended');
 			click(this.actions.run);

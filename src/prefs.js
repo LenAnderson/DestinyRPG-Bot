@@ -7,7 +7,8 @@ let prefs = {
 	stayInRegion: false,
 	
 	// patrol
-	maxScan: 5, 
+	maxScan: 5,
+	avoidHealth: 10,
 	luckyDay: 'glimmer',
 	
 	// battle

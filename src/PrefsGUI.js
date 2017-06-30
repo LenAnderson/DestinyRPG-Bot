@@ -19,6 +19,7 @@ class PrefsGUI {
 		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
 		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
 		this.dom.maxScan = this.body.querySelector('#maxScan');
+		this.dom.avoidHealth = this.body.querySelector('#avoidHealth');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');

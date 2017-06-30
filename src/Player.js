@@ -6,6 +6,7 @@ class Player {
 		this.maxHealth = 0;
 		this.minDamage = 9999999;
 		this.maxDamage = 1;
+		this.died = false;
 	}
 	
 	update() {
@@ -15,7 +16,7 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
+			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
 			this.health = parseInt(parts[1]);
 			this.maxHealth = parseInt(parts[2]);
 		}

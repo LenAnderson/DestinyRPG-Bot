@@ -5,6 +5,7 @@
 // @version      1.1
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
+// @match        https://test.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_setValue

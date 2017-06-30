@@ -5,6 +5,7 @@
 // @version      1.1
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
+// @match        https://test.destinyrpg.com/*
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_setValue
@@ -30,7 +31,8 @@
 	stayInRegion: false,
 	
 	// patrol
-	maxScan: 5, 
+	maxScan: 5,
+	avoidHealth: 10,
 	luckyDay: 'glimmer',
 	
 	// battle
@@ -59,13 +61,14 @@ if (sprefs) {
 		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=550,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
-		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p > label {cursor: pointer;display: inline-block;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
+		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p > label {cursor: pointer;display: inline-block;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"avoidHealth\">Avoid Enemies With x Times Player\'s Health</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"avoidHealth\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
 		
 		this.dom.updateInterval = this.body.querySelector('#updateInterval');
 		this.dom.updateIntervalRange = this.body.querySelector('#updateIntervalRange');
 		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
 		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
 		this.dom.maxScan = this.body.querySelector('#maxScan');
+		this.dom.avoidHealth = this.body.querySelector('#avoidHealth');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
@@ -149,7 +152,6 @@ function random(min, max) {
 }
 
 function click(el) {
-	console.log('click: ', el);
 	if (el == null) return;
 	el.scrollIntoViewIfNeeded();
 	let rect = el.getBoundingClientRect();
@@ -180,6 +182,7 @@ class Player {
 		this.maxHealth = 0;
 		this.minDamage = 9999999;
 		this.maxDamage = 1;
+		this.died = false;
 	}
 	
 	update() {
@@ -189,7 +192,7 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
+			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
 			this.health = parseInt(parts[1]);
 			this.maxHealth = parseInt(parts[2]);
 		}
@@ -289,10 +292,15 @@ class PatrolStage extends Stage {
 			// types: currency, ultra, ?
 			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 		}});
-		this.targets.sort(function(a,b)  {
+		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
 			if (a.type != 'currency' && b.type == 'currency') return 1;
+			// avoid enemies with much higher health / shield
+			if (this.player.maxHealth > 0) {
+				if (a.shield+a.health > this.player.maxHealth*prefs.avoidHealth && b.shield+b.health < this.player.maxHealth*prefs.avoidHealth) return 1;
+				if (a.shield+a.health < this.player.maxHealth*prefs.avoidHealth && b.shield+b.health > this.player.maxHealth*prefs.avoidHealth) return -1;
+			}
 			// prioritize high shield
 			if (a.shield > b.shield) return -1;
 			if (a.shield < b.shield) return 1;
@@ -360,12 +368,13 @@ class BattleStage extends Stage {
 	
 	updateActions() {
 		this.actions = {
-			attack: this.ui.page.querySelector('.attacklink'),
-			special: this.ui.page.querySelector('.speciallink'),
-			heavy: this.ui.page.querySelector('.heavylink'),
-			super: this.ui.page.querySelector('.superlink'),
-			cover: this.ui.page.querySelector('.coverlink'),
-			run: this.ui.page.querySelector('.runlink')
+			attack: this.ui.page.querySelector('#actions .attacklink'),
+			special: this.ui.page.querySelector('#actions .speciallink'),
+			heavy: this.ui.page.querySelector('#actions .heavylink'),
+			super: this.ui.page.querySelector('#actions .superlink'),
+			cover: this.ui.page.querySelector('#actions .coverlink'),
+			run: this.ui.page.querySelector('#actions .runlink'),
+			respawn: this.ui.page.querySelector('#actions a[href*="index.php"]')
 		};
 	}
 	
@@ -374,6 +383,12 @@ class BattleStage extends Stage {
 		
 		if (this.actions.attack) {
 			this.attack();
+		} else if (this.player.health < 0) {
+			this.player.died = true;
+			log.log('💀 You are dead!');
+			if (this.actions.respawn) {
+				click(this.actions.respawn);
+			}
 		} else {
 			log.log('Battle ended');
 			click(this.actions.run);

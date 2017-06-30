@@ -14,10 +14,15 @@ class PatrolStage extends Stage {
 			// types: currency, ultra, ?
 			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 		}});
-		this.targets.sort(function(a,b)  {
+		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
 			if (a.type != 'currency' && b.type == 'currency') return 1;
+			// avoid enemies with much higher health / shield
+			if (this.player.maxHealth > 0) {
+				if (a.shield+a.health > this.player.maxHealth*prefs.avoidHealth && b.shield+b.health < this.player.maxHealth*prefs.avoidHealth) return 1;
+				if (a.shield+a.health < this.player.maxHealth*prefs.avoidHealth && b.shield+b.health > this.player.maxHealth*prefs.avoidHealth) return -1;
+			}
 			// prioritize high shield
 			if (a.shield > b.shield) return -1;
 			if (a.shield < b.shield) return 1;
