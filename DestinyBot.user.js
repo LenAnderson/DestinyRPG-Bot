@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.8
+// @version      1.9
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -281,6 +281,7 @@ class PatrolStage extends Stage {
 	reset() {
 		this.targets = [];
 		this.scanned = 0;
+		this.player.died = false;
 	}
 	
 	updateTargets() {
@@ -508,7 +509,6 @@ class OrbitStage extends Stage {
 	
 	go() {
 		if (this.player.died) {
-			this.player.died = false;
 			click(this.ui.page.querySelector('.gobacklink'));
 		}
 	}

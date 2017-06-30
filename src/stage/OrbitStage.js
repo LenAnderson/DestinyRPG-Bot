@@ -4,7 +4,6 @@ class OrbitStage extends Stage {
 	
 	go() {
 		if (this.player.died) {
-			this.player.died = false;
 			click(this.ui.page.querySelector('.gobacklink'));
 		}
 	}

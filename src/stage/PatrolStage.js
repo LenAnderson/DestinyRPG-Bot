@@ -3,6 +3,7 @@ class PatrolStage extends Stage {
 	reset() {
 		this.targets = [];
 		this.scanned = 0;
+		this.player.died = false;
 	}
 	
 	updateTargets() {
