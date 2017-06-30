@@ -16,6 +16,8 @@ Once you have installed the extension, Click [here](https://github.com/LenAnders
 You need to be on patrol, on the travel screen, or in a battle for the bot to start.
 The following is a general outline of what the bot does:
 
+- **Orbit**
+  1. If you have just died, go back on patrol.
 - **Patrol**
   1. Attack chest or cache with highest HP.
   2. No chest or cache available? Attack enemy with highest SH.
