@@ -343,7 +343,7 @@ class PatrolStage extends Stage {
 		// if number if times "looking around" is higher then the max from preferences: travel
 		else if (this.scanned > prefs.maxScan) {
 			log.log('Going somewhere else...');
-			click(this.ui.page.querySelector('a[href*="chagnelocation.php"]'));
+			click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
 		}
 		// look around for enemies
 		else {
