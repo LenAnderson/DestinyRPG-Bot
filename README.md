@@ -1,6 +1,8 @@
 ## What is it?
 A bot for the game destinyrpg.com
 
+Based on [TryHardHusky's DestinyRPG-Bot}(https://github.com/TryHardHusky/DestinyRPG-Bot) but now completely rewritten from scratch.
+
 ## This allowed?
 Long story short. No. The developer does not want automation scripts.  
 Using this script will get you banned if caught.
@@ -58,6 +60,11 @@ You can customize some of the bot's behavior. In the Tampermonkey / Greasemonkey
   - **Take Cover At (% max health)** If your health goes below this percentage of max health you take cover.
   - **Run Away At (% max health)** If your health goes below this percentage of max health you run away from the fight.
 
+
+## Contributing / Development
+**Only ever make changes to the files inside the `src` directory.** The top file `DestinyBot.user.js` will be overwritten as soon as something changes.
+
+The files inside `src` are combined into `DestinyBot.user.js` with the [UserscriptWatcher](https://github.com/LenAnderson/UserscriptWatcher) script.
   
 # That's it.  
 Enjoy.
