@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.7
+// @version      1.8
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -503,6 +503,17 @@ class TravelStage extends Stage {
 	}
 }
 
+class OrbitStage extends Stage {
+	reset() {}
+	
+	go() {
+		if (this.player.died) {
+			this.player.died = false;
+			click(this.ui.page.querySelector('.gobacklink'));
+		}
+	}
+}
+
 class Bot {
 	constructor() {
 		this.ui = new UI();
@@ -518,6 +529,7 @@ class Bot {
 		this.stages[config.stage.patrol] = new PatrolStage(this.ui, this.player, this.enemy);
 		this.stages[config.stage.battle] = new BattleStage(this.ui, this.player, this.enemy);
 		this.stages[config.stage.travel] = new TravelStage(this.ui, this.player, this.enemy);
+		this.stages[config.stage.orbit] = new OrbitStage(this.ui, this.player, this.enemy);
 		this.stageId = 'default';
 		
 		this.update();
