@@ -352,7 +352,7 @@ class PatrolStage extends Stage {
 		else {
 			this.scanned++;
 			log.log('🔎 Searching for enemies');
-			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
+			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink'));
 		}
 	}
 }
