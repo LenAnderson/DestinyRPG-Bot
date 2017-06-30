@@ -1,7 +1,7 @@
 ## What is it?
 A bot for the game destinyrpg.com
 
-Based on [TryHardHusky's DestinyRPG-Bot}(https://github.com/TryHardHusky/DestinyRPG-Bot) but now completely rewritten from scratch.
+Based on [TryHardHusky's DestinyRPG-Bot](https://github.com/TryHardHusky/DestinyRPG-Bot) but now completely rewritten from scratch.
 
 ## This allowed?
 Long story short. No. The developer does not want automation scripts.  
