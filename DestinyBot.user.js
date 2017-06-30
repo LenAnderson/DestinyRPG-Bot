@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.4
+// @version      1.5
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -447,7 +447,7 @@ class TravelStage extends Stage {
 		this.locations = this.getOptions('location');
 	}
 	updateRegions() {
-		this.regions = this.getOptions('region').filter(it=>{return it.title!='The City';});
+		this.regions = this.getOptions('region');
 	}
 	updateSubregions() {
 		this.subregions = this.getOptions('subregion');
@@ -488,10 +488,12 @@ class TravelStage extends Stage {
 		} else if (this.changedLocation || this.changedRegion) {
 			this.changedLocation = false;
 			this.chagnedRegion = false;
+			if (this.subregions[curSub].title == 'The Tower') return;
 			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
 			click(this.subregions[curSub].el);
 		} else {
 			let subregion = this.subregions[++curSub%this.subregions.length];
+			if (subregion.title == 'The Tower') return;
 			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
 			click(subregion.el);
 		}
