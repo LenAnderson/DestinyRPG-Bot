@@ -31,7 +31,7 @@ section > p {
 section > p > label {
 	cursor: pointer;
 	display: inline-block;
-	width: 300px;
+	width: 400px;
 }
 section > p > input {
 	background-color: transparent;

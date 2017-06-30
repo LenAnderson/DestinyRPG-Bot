@@ -1,9 +1,5 @@
 ${include-once: ../Stage.js}
 class PatrolStage extends Stage {
-	constructor(ui, player, enemy) {
-		super(ui, player, enemy);
-	}
-	
 	reset() {
 		this.targets = [];
 		this.scanned = 0;
@@ -61,8 +57,14 @@ class PatrolStage extends Stage {
 				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 			}
 		}
+		// if number if times "looking around" is higher then the max from preferences: travel
+		else if (this.scanned > prefs.maxScan) {
+			log.log('Going somewhere else...');
+			click(this.ui.page.querySelector('a[href*="chagnelocation.php"]'));
+		}
 		// look around for enemies
 		else {
+			this.scanned++;
 			log.log('Searching for enemies');
 			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}

@@ -3,6 +3,7 @@ ${include-once: Player.js}
 ${include-once: Enemy.js}
 ${include-once: stage/PatrolStage.js}
 ${include-once: stage/BattleStage.js}
+${include-once: stage/TravelStage.js}
 
 class Bot {
 	constructor() {
@@ -18,6 +19,7 @@ class Bot {
 		};
 		this.stages[config.stage.patrol] = new PatrolStage(this.ui, this.player, this.enemy);
 		this.stages[config.stage.battle] = new BattleStage(this.ui, this.player, this.enemy);
+		this.stages[config.stage.travel] = new TravelStage(this.ui, this.player, this.enemy);
 		this.stageId = 'default';
 		
 		this.update();

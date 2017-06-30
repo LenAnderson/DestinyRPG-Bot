@@ -9,13 +9,16 @@ class PrefsGUI {
 			this.window.focus();
 			return;
 		}
-		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=485,centerscreen,menubar=no,toolbar=no,location=no');
+		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=550,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
 		this.body.innerHTML = '${include-min-esc: html/prefs.html}';
 		
 		this.dom.updateInterval = this.body.querySelector('#updateInterval');
 		this.dom.updateIntervalRange = this.body.querySelector('#updateIntervalRange');
+		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
+		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
+		this.dom.maxScan = this.body.querySelector('#maxScan');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');

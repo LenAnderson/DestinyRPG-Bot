@@ -41,6 +41,7 @@ function random(min, max) {
 }
 
 function click(el) {
+	console.log('click: ', el);
 	if (el == null) return;
 	el.scrollIntoViewIfNeeded();
 	let rect = el.getBoundingClientRect();

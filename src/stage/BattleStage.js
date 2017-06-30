@@ -1,9 +1,5 @@
 ${include-once: ../Stage.js}
 class BattleStage extends Stage {
-	constructor(ui, player, enemy) {
-		super(ui, player, enemy);
-	}
-	
 	reset() {
 		this.actions = {
 			attack: null,

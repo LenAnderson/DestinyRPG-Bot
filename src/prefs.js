@@ -1,9 +1,24 @@
-let prefs = JSON.parse(GM_getValue('drb_prefs')||'false') || {
+let prefs = {
 	updateInterval: 1000,
 	updateIntervalRange: 400,
 	
-	coverAt: 50,
-	runAt: 20,
+	// travel
+	stayInLocation: false,
+	stayInRegion: false,
 	
-	luckyDay: 'glimmer'
+	// patrol
+	maxScan: 5, 
+	luckyDay: 'glimmer',
+	
+	// battle
+	coverAt: 50,
+	runAt: 20
 };
+let sprefs = JSON.parse(GM_getValue('drb_prefs')||'false');
+if (sprefs) {
+	Object.keys(prefs).forEach((key) => {
+		if (sprefs[key] !== undefined) {
+			prefs[key] = sprefs[key];
+		}
+	});
+}

@@ -17,18 +17,34 @@
 	stage: {
 	orbit: 'index-1',
 	battle: 'battle',
-	patrol: 'patrol'
+	patrol: 'patrol',
+	travel: 'changelocation'
 }
 }
-	let prefs = JSON.parse(GM_getValue('drb_prefs')||'false') || {
+	let prefs = {
 	updateInterval: 1000,
 	updateIntervalRange: 400,
 	
-	coverAt: 50,
-	runAt: 20,
+	// travel
+	stayInLocation: false,
+	stayInRegion: false,
 	
-	luckyDay: 'glimmer'
+	// patrol
+	maxScan: 5, 
+	luckyDay: 'glimmer',
+	
+	// battle
+	coverAt: 50,
+	runAt: 20
 };
+let sprefs = JSON.parse(GM_getValue('drb_prefs')||'false');
+if (sprefs) {
+	Object.keys(prefs).forEach((key) => {
+		if (sprefs[key] !== undefined) {
+			prefs[key] = sprefs[key];
+		}
+	});
+}
 	class PrefsGUI {
 	constructor() {
 		this.window;
@@ -40,13 +56,16 @@
 			this.window.focus();
 			return;
 		}
-		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=485,centerscreen,menubar=no,toolbar=no,location=no');
+		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=550,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
-		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p > label {cursor: pointer;display: inline-block;width: 300px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Patrol</h2><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
+		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p > label {cursor: pointer;display: inline-block;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
 		
 		this.dom.updateInterval = this.body.querySelector('#updateInterval');
 		this.dom.updateIntervalRange = this.body.querySelector('#updateIntervalRange');
+		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
+		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
+		this.dom.maxScan = this.body.querySelector('#maxScan');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
@@ -130,6 +149,7 @@ function random(min, max) {
 }
 
 function click(el) {
+	console.log('click: ', el);
 	if (el == null) return;
 	el.scrollIntoViewIfNeeded();
 	let rect = el.getBoundingClientRect();
@@ -255,10 +275,6 @@ class Stage {
 	}
 }
 class PatrolStage extends Stage {
-	constructor(ui, player, enemy) {
-		super(ui, player, enemy);
-	}
-	
 	reset() {
 		this.targets = [];
 		this.scanned = 0;
@@ -316,8 +332,14 @@ class PatrolStage extends Stage {
 				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 			}
 		}
+		// if number if times "looking around" is higher then the max from preferences: travel
+		else if (this.scanned > prefs.maxScan) {
+			log.log('Going somewhere else...');
+			click(this.ui.page.querySelector('a[href*="chagnelocation.php"]'));
+		}
 		// look around for enemies
 		else {
+			this.scanned++;
 			log.log('Searching for enemies');
 			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}
@@ -325,10 +347,6 @@ class PatrolStage extends Stage {
 }
 
 class BattleStage extends Stage {
-	constructor(ui, player, enemy) {
-		super(ui, player, enemy);
-	}
-	
 	reset() {
 		this.actions = {
 			attack: null,
@@ -398,6 +416,73 @@ class BattleStage extends Stage {
 	}
 }
 
+class TravelStage extends Stage {
+	constructor(ui, player, enemy) {
+		super(ui, player, enemy);
+	}
+	reset() {
+		this.locations = [];
+		this.regions = [];
+		this.subregions = [];
+		this.changedLocation = false;
+		this.changedRegion = false;
+	}
+	
+	updateLocations() {
+		this.locations = this.getOptions('location');
+	}
+	updateRegions() {
+		this.regions = this.getOptions('region');
+	}
+	updateSubregions() {
+		this.subregions = this.getOptions('subregion');
+	}
+	getOptions(type) {
+		return toArray(this.ui.page.querySelectorAll('#'+type+'s .change'+type+'link')).map((a) => {return {
+			el: a,
+			current: a.querySelector('.item-content > .item-media').textContent == 'check',
+			title: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(\s+\(\d+\).*)?$/, '$1'),
+			players: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(?:\s+\((\d+)\).*)?$/, '$2')*1,
+			locked: a.querySelector('.item-content > .item-inner > .item-after') != null
+		}}).filter((it) => {return !it.locked;});
+	}
+	
+	go() {
+		this.updateLocations();
+		this.updateRegions();
+		this.updateSubregions();
+		
+		// try to travel to the next subregion.
+		// if the last subregion on the list is the current subregion: travel to the next region
+		// if the last region on the list is the current region: travel to the next location
+		let curLoc = this.locations.findIndex(it=>{return it.current;})
+		let curReg = this.regions.findIndex(it=>{return it.current;})
+		let curSub = this.subregions.findIndex(it=>{return it.current;})
+		if (!prefs.stayInRegion && !this.changedLocation && !this.changedRegion && (this.subregions.length == 1 || curSub == this.subregions.length-1)) {
+			if (!prefs.stayInLocation && (this.regions.length == 1 || curReg == this.regions.length-1)) {
+				let location = this.locations[++curLoc%this.locations.length];
+				this.changedLocation = true;
+				log.log('Traveling to ' + location.title);
+				click(location.el);
+			} else {
+				let region = this.regions[++curReg%this.regions.length];
+				this.changedRegion = true;
+				log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + region.title);
+				click(region.el);
+			}
+		} else if (this.changedLocation || this.changedRegion) {
+			this.changedLocation = false;
+			this.chagnedRegion = false;
+			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
+			click(this.subregions[curSub].el);
+		} else {
+			let subregion = this.subregions[++curSub%this.subregions.length];
+			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
+			click(subregion.el);
+		}
+	}
+}
+
 class Bot {
 	constructor() {
 		this.ui = new UI();
@@ -412,6 +497,7 @@ class Bot {
 		};
 		this.stages[config.stage.patrol] = new PatrolStage(this.ui, this.player, this.enemy);
 		this.stages[config.stage.battle] = new BattleStage(this.ui, this.player, this.enemy);
+		this.stages[config.stage.travel] = new TravelStage(this.ui, this.player, this.enemy);
 		this.stageId = 'default';
 		
 		this.update();
