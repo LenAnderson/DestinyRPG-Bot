@@ -35,7 +35,7 @@ class BattleStage extends Stage {
 				click(this.actions.respawn);
 			}
 		} else {
-			log.log('Battle ended');
+			log.log('🏆 Battle ended');
 			click(this.actions.run);
 		}
 	}
@@ -43,12 +43,12 @@ class BattleStage extends Stage {
 	attack() {
 		// run if low on health
 		if (this.actions.run && (this.player.health < (prefs.runAt / 100) * this.player.maxHealth || this.player.health < this.enemy.damage * 1.1)) {
-			log.log('Low health. Running like hell.');
+			log.log('🏃 Low health. Running like hell.');
 			click(this.actions.run);
 		}
 		// heal if possible at less than x% health
 		else if (this.actions.cover && this.player.health < (prefs.coverAt / 100) * this.player.maxHealth) {
-			log.log('Healing under cover.');
+			log.log('🚑 Healing under cover.');
 			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage

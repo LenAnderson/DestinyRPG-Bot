@@ -49,7 +49,7 @@ class PatrolStage extends Stage {
 		if (this.targets.length > 0) {
 			let target = this.targets[0];
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
-			log.log('Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
+			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
 			this.enemy.type = target.type;
 			click(target.el);
 		}
@@ -64,13 +64,13 @@ class PatrolStage extends Stage {
 		}
 		// if number if times "looking around" is higher then the max from preferences: travel
 		else if (this.scanned > prefs.maxScan) {
-			log.log('Going somewhere else...');
+			log.log('✈ Going somewhere else...');
 			click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
 		}
 		// look around for enemies
 		else {
 			this.scanned++;
-			log.log('Searching for enemies');
+			log.log('🔎 Searching for enemies');
 			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}
 	}

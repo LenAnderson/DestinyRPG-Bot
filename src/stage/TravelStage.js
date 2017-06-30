@@ -45,22 +45,22 @@ class TravelStage extends Stage {
 			if (!prefs.stayInLocation && (this.regions.length == 1 || curReg == this.regions.length-1)) {
 				let location = this.locations[++curLoc%this.locations.length];
 				this.changedLocation = true;
-				log.log('Traveling to ' + location.title);
+				log.log('✈ Traveling to ' + location.title);
 				click(location.el);
 			} else {
 				let region = this.regions[++curReg%this.regions.length];
 				this.changedRegion = true;
-				log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + region.title);
+				log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + region.title);
 				click(region.el);
 			}
 		} else if (this.changedLocation || this.changedRegion) {
 			this.changedLocation = false;
 			this.chagnedRegion = false;
-			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
+			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
 			click(this.subregions[curSub].el);
 		} else {
 			let subregion = this.subregions[++curSub%this.subregions.length];
-			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
+			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
 			click(subregion.el);
 		}
 	}

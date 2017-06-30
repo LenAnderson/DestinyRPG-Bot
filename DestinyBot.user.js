@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.3
+// @version      1.4
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -327,7 +327,7 @@ class PatrolStage extends Stage {
 		if (this.targets.length > 0) {
 			let target = this.targets[0];
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
-			log.log('Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
+			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
 			this.enemy.type = target.type;
 			click(target.el);
 		}
@@ -342,13 +342,13 @@ class PatrolStage extends Stage {
 		}
 		// if number if times "looking around" is higher then the max from preferences: travel
 		else if (this.scanned > prefs.maxScan) {
-			log.log('Going somewhere else...');
+			log.log('✈ Going somewhere else...');
 			click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
 		}
 		// look around for enemies
 		else {
 			this.scanned++;
-			log.log('Searching for enemies');
+			log.log('🔎 Searching for enemies');
 			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink[href="#"]'));
 		}
 	}
@@ -390,7 +390,7 @@ class BattleStage extends Stage {
 				click(this.actions.respawn);
 			}
 		} else {
-			log.log('Battle ended');
+			log.log('🏆 Battle ended');
 			click(this.actions.run);
 		}
 	}
@@ -398,12 +398,12 @@ class BattleStage extends Stage {
 	attack() {
 		// run if low on health
 		if (this.actions.run && (this.player.health < (prefs.runAt / 100) * this.player.maxHealth || this.player.health < this.enemy.damage * 1.1)) {
-			log.log('Low health. Running like hell.');
+			log.log('🏃 Low health. Running like hell.');
 			click(this.actions.run);
 		}
 		// heal if possible at less than x% health
 		else if (this.actions.cover && this.player.health < (prefs.coverAt / 100) * this.player.maxHealth) {
-			log.log('Healing under cover.');
+			log.log('🚑 Healing under cover.');
 			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
@@ -477,22 +477,22 @@ class TravelStage extends Stage {
 			if (!prefs.stayInLocation && (this.regions.length == 1 || curReg == this.regions.length-1)) {
 				let location = this.locations[++curLoc%this.locations.length];
 				this.changedLocation = true;
-				log.log('Traveling to ' + location.title);
+				log.log('✈ Traveling to ' + location.title);
 				click(location.el);
 			} else {
 				let region = this.regions[++curReg%this.regions.length];
 				this.changedRegion = true;
-				log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + region.title);
+				log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + region.title);
 				click(region.el);
 			}
 		} else if (this.changedLocation || this.changedRegion) {
 			this.changedLocation = false;
 			this.chagnedRegion = false;
-			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
+			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + this.subregions[curSub].title);
 			click(this.subregions[curSub].el);
 		} else {
 			let subregion = this.subregions[++curSub%this.subregions.length];
-			log.log('Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
+			log.log('✈ Traveling to ' + this.locations[curLoc].title + ' / ' + this.regions[curReg].title + ' / ' + subregion.title);
 			click(subregion.el);
 		}
 	}
