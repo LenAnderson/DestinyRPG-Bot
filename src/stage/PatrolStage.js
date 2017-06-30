@@ -23,6 +23,9 @@ class PatrolStage extends Stage {
 				if (a.shield+a.health > this.player.maxHealth*prefs.avoidHealth && b.shield+b.health < this.player.maxHealth*prefs.avoidHealth) return 1;
 				if (a.shield+a.health < this.player.maxHealth*prefs.avoidHealth && b.shield+b.health > this.player.maxHealth*prefs.avoidHealth) return -1;
 			}
+			// prioritze ultras
+			if (a.type == 'ultra' && b.type != 'ultra') return -1;
+			if (a.type != 'ultra' && b.type == 'ultra') return 1;
 			// prioritize high shield
 			if (a.shield > b.shield) return -1;
 			if (a.shield < b.shield) return 1;
