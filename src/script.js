@@ -24,16 +24,16 @@
 	
 	let prefsGUI = new PrefsGUI();
 	GM_registerMenuCommand('[DRB] Preferences', prefsGUI.show.bind(prefsGUI));
-	let cmdPause = GM_registerMenuCommand('[DRP] Pause Bot', pause);
+	let cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
 	let cmdUnpause;
 	function pause() {
 		bot.pause();
 		GM_unregisterMenuCommand(cmdPause);
-		cmdUnpause = GM_registerMenuCommand('[DRP] Unpause Bot', unpause);
+		cmdUnpause = GM_registerMenuCommand('[DRB] Unpause Bot', unpause);
 	}
 	function unpause() {
 		bot.unpause();
 		GM_unregisterMenuCommand(cmdUnpause);
-		cmdPause = GM_registerMenuCommand('[DRP] Pause Bot', pause);
+		cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
 	}
 })();
