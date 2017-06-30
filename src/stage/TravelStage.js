@@ -15,7 +15,7 @@ class TravelStage extends Stage {
 		this.locations = this.getOptions('location');
 	}
 	updateRegions() {
-		this.regions = this.getOptions('region');
+		this.regions = this.getOptions('region').filter(it=>{return it.title!='The City';});
 	}
 	updateSubregions() {
 		this.subregions = this.getOptions('subregion');
