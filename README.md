@@ -22,7 +22,8 @@ The following is a general outline of what the bot does:
   1. If you have just died, go back on patrol.
 - **Patrol**
   1. Attack chest or cache with highest HP.
-  2. No chest or cache available? Attack enemy with highest SH.
+  2. No chest or cache available? Attack ultra enemy.
+  2. No ultra available? Attack enemy with highest SH.
   3. No shielded enemy available? Attack enemy with highest HP.
   4. No enemies and no chests / caches available? Look around for a couple of times and then go somewhere else.
 - **Battle**
