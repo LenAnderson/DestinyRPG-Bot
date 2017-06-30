@@ -12,9 +12,9 @@ class PatrolStage extends Stage {
 			name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
 			health: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*HP.*$/, '$1')*1 || 0,
 			shield: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*SH.*$/, '$1')*1 || 0,
-			// types: currency, ultra, ?
+			// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
 			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
-		}});
+		}}).filter((t) => {return t.type != 'ultra-pe' || prefs.attackUltraPe; });
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
@@ -24,6 +24,9 @@ class PatrolStage extends Stage {
 				if (a.shield+a.health > this.player.maxHealth*prefs.avoidHealth && b.shield+b.health < this.player.maxHealth*prefs.avoidHealth) return 1;
 				if (a.shield+a.health < this.player.maxHealth*prefs.avoidHealth && b.shield+b.health > this.player.maxHealth*prefs.avoidHealth) return -1;
 			}
+			// prioritize ultra-pe (red skulls)
+			if (a.type == 'ultra-pe' && b.type != 'ultra-pe') return -1;
+			if (a.type != 'ultra-pe' && b.type == 'ultra-pe') return 1;
 			// prioritze ultras
 			if (a.type == 'ultra' && b.type != 'ultra') return -1;
 			if (a.type != 'ultra' && b.type == 'ultra') return 1;

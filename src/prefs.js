@@ -8,6 +8,7 @@ let prefs = {
 	
 	// patrol
 	maxScan: 5,
+	attackUltraPe: false,
 	avoidHealth: 10,
 	luckyDay: 'glimmer',
 	
