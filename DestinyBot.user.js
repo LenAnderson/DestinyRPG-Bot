@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.13
+// @version      1.15
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -198,11 +198,13 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = this.ui.page.querySelector('.playerInfo > img[src*="icon-hp3.png"]');
+			let el = this.ui.page.querySelector('.playerInfo');
 			if (el) {
-				let parts = el.previousSibling.textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+).*$/, '$1 : $2');
-				this.health = parseInt(parts[1]);
-				this.maxHealth = parseInt(parts[2]);
+				let parts = el.textContent.match(/^[\s\S]+?(\d+)\s*\/\s*([\d,]+)[\s\S]*$/m, '$1:$2');
+				if (parts && parts.length > 2) {
+					this.health = parseInt(parts[1].replace(/,/g, '')*1);
+					this.maxHealth = parseInt(parts[2].replace(/,/g, '')*1);
+				}
 			}
 		}
 	}
@@ -242,7 +244,7 @@ class Enemy {
 			else this.health = 0;
 			
 			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
-			if (shieldImg) this.shield = shieldImg.previousElementSibling.textContent.trim()*1;
+			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim()*1;
 			else this.shield = 0;
 		}
 	}

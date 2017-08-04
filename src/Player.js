@@ -16,11 +16,13 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = this.ui.page.querySelector('.playerInfo > img[src*="icon-hp3.png"]');
+			let el = this.ui.page.querySelector('.playerInfo');
 			if (el) {
-				let parts = el.previousSibling.textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+).*$/, '$1 : $2');
-				this.health = parseInt(parts[1]);
-				this.maxHealth = parseInt(parts[2]);
+				let parts = el.textContent.match(/^[\s\S]+?(\d+)\s*\/\s*([\d,]+)[\s\S]*$/m, '$1:$2');
+				if (parts && parts.length > 2) {
+					this.health = parseInt(parts[1].replace(/,/g, '')*1);
+					this.maxHealth = parseInt(parts[2].replace(/,/g, '')*1);
+				}
 			}
 		}
 	}

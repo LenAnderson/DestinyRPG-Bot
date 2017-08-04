@@ -22,7 +22,7 @@ class Enemy {
 			else this.health = 0;
 			
 			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
-			if (shieldImg) this.shield = shieldImg.previousElementSibling.textContent.trim()*1;
+			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim()*1;
 			else this.shield = 0;
 		}
 	}
