@@ -17,23 +17,21 @@ class Enemy {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 + .col-50 > a > span').textContent.replace(/,/g, '').match(/.*?(?:(?:(\d+)\s*HP)|(?:(\d+)\s*Shield)).*$/);
-			if (parts) {
-				this.health = (parts[1]||0)*1;
-				this.shield = (parts[2]||0)*1;
-			} else {
-				this.health = 0;
-				this.shield = 0;
-			}
+			let healthImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-hp3.png"]');
+			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim()*1;
+			else this.health = 0;
+			
+			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
+			if (shieldImg) this.shield = shieldImg.previousElementSibling.textContent.trim()*1;
+			else this.shield = 0;
 		}
 	}
 	
 	updateDamage() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = toArray(this.ui.page.querySelectorAll('#console > strong')).find(it=>{return getComputedStyle(it).color == 'rgb(255, 0, 0)';});
+			let el = this.ui.page.querySelector('.enemyInfo > strong');
 			if (el) {
-				let parts = el.textContent.replace(/,/g, '').match(/.*?(\d+).*$/, '$1');
-				let dam = (parts[1]*1) || 0;
+				let dam = el.textContent.trim()*1;
 				this.minDamage = Math.min(this.minDamage, dam);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}

@@ -13,13 +13,13 @@ class BattleStage extends Stage {
 	
 	updateActions() {
 		this.actions = {
-			attack: this.ui.page.querySelector('#actions .attacklink'),
-			special: this.ui.page.querySelector('#actions .speciallink'),
-			heavy: this.ui.page.querySelector('#actions .heavylink'),
-			super: this.ui.page.querySelector('#actions .superlink'),
-			cover: this.ui.page.querySelector('#actions .coverlink'),
-			run: this.ui.page.querySelector('#actions .runlink'),
-			respawn: this.ui.page.querySelector('#actions a[href*="index.php"]')
+			attack: this.ui.page.querySelector('.actions .attacklink'),
+			special: this.ui.page.querySelector('.actions .speciallink'),
+			heavy: this.ui.page.querySelector('.actions .heavylink'),
+			super: this.ui.page.querySelector('.actions .superlink'),
+			cover: this.ui.page.querySelector('.actions .coverlink'),
+			run: this.ui.page.querySelector('.actions .runlink'),
+			respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
 		};
 	}
 	

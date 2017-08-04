@@ -7,14 +7,17 @@ class PatrolStage extends Stage {
 	}
 	
 	updateTargets() {
-		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a[href^="battle.php"]')).map((a) => { return {
-			el: a,
-			name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
-			health: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*HP.*$/, '$1')*1 || 0,
-			shield: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*SH.*$/, '$1')*1 || 0,
-			// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
-			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
-		}}).filter((t) => {return t.type != 'ultra-pe' || prefs.attackUltraPe; });
+		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a.initBattle')).map((a) => {
+			let after = a.querySelector('.item-content > .item-inner > .item-after');
+			return {
+				el: a,
+				name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
+				health: after.querySelector('.item-media > img[src*="icon-hp3.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
+				shield: after.querySelector('.item-media > img[src*="icon-shield.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
+				// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
+				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
+			}
+		}).filter((t) => {return (t.type != 'ultra-pe' || prefs.attackUltraPe) && t.el.getAttribute('disabled') == null; });
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;

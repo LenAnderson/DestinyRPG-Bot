@@ -26,7 +26,7 @@ class TravelStage extends Stage {
 			current: a.querySelector('.item-content > .item-media').textContent == 'check',
 			title: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(\s+\(\d+\).*)?$/, '$1'),
 			players: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(?:\s+\((\d+)\).*)?$/, '$2')*1,
-			locked: a.querySelector('.item-content > .item-inner > .item-after') != null
+			locked: (a.querySelector('.item-content > .item-inner > .item-after > .button > .f7-icons') || {}).textContent == 'lock_fill'
 		}}).filter((it) => {return !it.locked;});
 	}
 	

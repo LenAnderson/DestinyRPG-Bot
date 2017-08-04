@@ -16,18 +16,20 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
-			this.health = parseInt(parts[1]);
-			this.maxHealth = parseInt(parts[2]);
+			let el = this.ui.page.querySelector('.playerInfo > img[src*="icon-hp3.png"]');
+			if (el) {
+				let parts = el.previousSibling.textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+).*$/, '$1 : $2');
+				this.health = parseInt(parts[1]);
+				this.maxHealth = parseInt(parts[2]);
+			}
 		}
 	}
 	
 	updateDamage() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = toArray(this.ui.page.querySelectorAll('#console > strong')).find(it=>{return getComputedStyle(it).color == 'rgb(50, 205, 50)';});
+			let el = this.ui.page.querySelector('.playerInfo > strong');
 			if (el) {
-				let parts = el.textContent.replace(/,/g, '').match(/.*?(\d+).*$/, '$1');
-				let dam = (parts[1]*1) || 0;
+				let dam = el.textContent.trim()*1 || 0;
 				this.minDamage = Math.min(this.minDamage, dam||this.minDamage);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}

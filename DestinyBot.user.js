@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.10
+// @version      1.11
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -194,18 +194,20 @@ class Player {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 > span').textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+)\s*HP.*$/, '$1 : $2');
-			this.health = parseInt(parts[1]);
-			this.maxHealth = parseInt(parts[2]);
+			let el = this.ui.page.querySelector('.playerInfo > img[src*="icon-hp3.png"]');
+			if (el) {
+				let parts = el.previousSibling.textContent.replace(/,/g, '').match(/.*?(-?\d+)\s*\/\s*(\d+).*$/, '$1 : $2');
+				this.health = parseInt(parts[1]);
+				this.maxHealth = parseInt(parts[2]);
+			}
 		}
 	}
 	
 	updateDamage() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = toArray(this.ui.page.querySelectorAll('#console > strong')).find(it=>{return getComputedStyle(it).color == 'rgb(50, 205, 50)';});
+			let el = this.ui.page.querySelector('.playerInfo > strong');
 			if (el) {
-				let parts = el.textContent.replace(/,/g, '').match(/.*?(\d+).*$/, '$1');
-				let dam = (parts[1]*1) || 0;
+				let dam = el.textContent.trim()*1 || 0;
 				this.minDamage = Math.min(this.minDamage, dam||this.minDamage);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}
@@ -231,23 +233,21 @@ class Enemy {
 	
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
-			let parts = this.ui.page.querySelector('.page-content > .content-block > .row > .col-50 + .col-50 > a > span').textContent.replace(/,/g, '').match(/.*?(?:(?:(\d+)\s*HP)|(?:(\d+)\s*Shield)).*$/);
-			if (parts) {
-				this.health = (parts[1]||0)*1;
-				this.shield = (parts[2]||0)*1;
-			} else {
-				this.health = 0;
-				this.shield = 0;
-			}
+			let healthImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-hp3.png"]');
+			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim()*1;
+			else this.health = 0;
+			
+			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
+			if (shieldImg) this.shield = shieldImg.previousElementSibling.textContent.trim()*1;
+			else this.shield = 0;
 		}
 	}
 	
 	updateDamage() {
 		if (this.ui.stage == config.stage.battle) {
-			let el = toArray(this.ui.page.querySelectorAll('#console > strong')).find(it=>{return getComputedStyle(it).color == 'rgb(255, 0, 0)';});
+			let el = this.ui.page.querySelector('.enemyInfo > strong');
 			if (el) {
-				let parts = el.textContent.replace(/,/g, '').match(/.*?(\d+).*$/, '$1');
-				let dam = (parts[1]*1) || 0;
+				let dam = el.textContent.trim()*1;
 				this.minDamage = Math.min(this.minDamage, dam);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}
@@ -287,14 +287,17 @@ class PatrolStage extends Stage {
 	}
 	
 	updateTargets() {
-		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a[href^="battle.php"]')).map((a) => { return {
-			el: a,
-			name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
-			health: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*HP.*$/, '$1')*1 || 0,
-			shield: a.querySelector('.item-content > .item-inner > .item-after').textContent.replace(/,/g, '').replace(/.*?(\d+)\s*SH.*$/, '$1')*1 || 0,
-			// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
-			type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
-		}}).filter((t) => {return t.type != 'ultra-pe' || prefs.attackUltraPe; });
+		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a.initBattle')).map((a) => {
+			let after = a.querySelector('.item-content > .item-inner > .item-after');
+			return {
+				el: a,
+				name: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim(),
+				health: after.querySelector('.item-media > img[src*="icon-hp3.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
+				shield: after.querySelector('.item-media > img[src*="icon-shield.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
+				// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
+				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
+			}
+		}).filter((t) => {return (t.type != 'ultra-pe' || prefs.attackUltraPe) && t.el.getAttribute('disabled') == null; });
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
@@ -377,13 +380,13 @@ class BattleStage extends Stage {
 	
 	updateActions() {
 		this.actions = {
-			attack: this.ui.page.querySelector('#actions .attacklink'),
-			special: this.ui.page.querySelector('#actions .speciallink'),
-			heavy: this.ui.page.querySelector('#actions .heavylink'),
-			super: this.ui.page.querySelector('#actions .superlink'),
-			cover: this.ui.page.querySelector('#actions .coverlink'),
-			run: this.ui.page.querySelector('#actions .runlink'),
-			respawn: this.ui.page.querySelector('#actions a[href*="index.php"]')
+			attack: this.ui.page.querySelector('.actions .attacklink'),
+			special: this.ui.page.querySelector('.actions .speciallink'),
+			heavy: this.ui.page.querySelector('.actions .heavylink'),
+			super: this.ui.page.querySelector('.actions .superlink'),
+			cover: this.ui.page.querySelector('.actions .coverlink'),
+			run: this.ui.page.querySelector('.actions .runlink'),
+			respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
 		};
 	}
 	
@@ -467,7 +470,7 @@ class TravelStage extends Stage {
 			current: a.querySelector('.item-content > .item-media').textContent == 'check',
 			title: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(\s+\(\d+\).*)?$/, '$1'),
 			players: a.querySelector('.item-content > .item-inner > .item-title').textContent.trim().replace(/^(.+?)(?:\s+\((\d+)\).*)?$/, '$2')*1,
-			locked: a.querySelector('.item-content > .item-inner > .item-after') != null
+			locked: (a.querySelector('.item-content > .item-inner > .item-after > .button > .f7-icons') || {}).textContent == 'lock_fill'
 		}}).filter((it) => {return !it.locked;});
 	}
 	
