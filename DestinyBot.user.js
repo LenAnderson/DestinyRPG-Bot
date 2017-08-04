@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.12
+// @version      1.13
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -413,7 +413,7 @@ class BattleStage extends Stage {
 		
 		if (this.actions.attack) {
 			this.attack();
-		} else if (this.player.health < 0) {
+		} else if (this.actions.respawn) {
 			this.player.died = true;
 			log.log('💀 You are dead!');
 			if (this.actions.respawn) {

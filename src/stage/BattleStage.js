@@ -28,7 +28,7 @@ class BattleStage extends Stage {
 		
 		if (this.actions.attack) {
 			this.attack();
-		} else if (this.player.health < 0) {
+		} else if (this.actions.respawn) {
 			this.player.died = true;
 			log.log('💀 You are dead!');
 			if (this.actions.respawn) {
