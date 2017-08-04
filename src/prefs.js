@@ -11,6 +11,8 @@ let prefs = {
 	attackUltraPe: false,
 	avoidHealth: 10,
 	luckyDay: 'glimmer',
+	onlyBounties: true,
+	bountiesAndChests: true,
 	
 	// battle
 	coverAt: 50,

@@ -2,11 +2,17 @@ ${include-once: ../Stage.js}
 class PatrolStage extends Stage {
 	reset() {
 		this.targets = [];
+		this.bounties = [];
 		this.scanned = 0;
 		this.player.died = false;
 	}
 	
+	updateBounties() {
+		this.bounties = toArray(document.querySelectorAll('#progressItems > .card')).filter(it=>{return it.textContent.search('Bounty:')>-1;}).map(it=>{return it.textContent.trim().replace(/^.+\d+\s*\/\s*\d+\s*(.+?)\s*\(.+$/, '$1');});
+	}
+	
 	updateTargets() {
+		this.updateBounties();
 		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a.initBattle')).map((a) => {
 			let after = a.querySelector('.item-content > .item-inner > .item-after');
 			return {
@@ -17,11 +23,19 @@ class PatrolStage extends Stage {
 				// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
 				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 			}
-		}).filter((t) => {return (t.type != 'ultra-pe' || prefs.attackUltraPe) && t.el.getAttribute('disabled') == null; });
+		}).filter((t) => {
+			let result = (t.type != 'ultra-pe' || prefs.attackUltraPe) // remove ultras
+							&& t.el.getAttribute('disabled') == null // remove disabled
+							&& (!prefs.onlyBounties || (this.bounties.length == 0 || this.bounties.indexOf(t.name) > -1 || (t.type == 'currency' && prefs.bountiesAndChests))); // remove non-bounties
+			return result;
+		});
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
 			if (a.type == 'currency' && b.type != 'currency') return -1;
 			if (a.type != 'currency' && b.type == 'currency') return 1;
+			// prioritize bounties
+			if (this.bounties.indexOf(a.name) > -1 && this.bounties.indexOf(b.name) == -1) return -1;
+			if (this.bounties.indexOf(a.name) == -1 && this.bounties.indexOf(b.name) > -1) return -1;
 			// avoid enemies with much higher health / shield
 			if (this.player.maxHealth > 0) {
 				if (a.shield+a.health > this.player.maxHealth*prefs.avoidHealth && b.shield+b.health < this.player.maxHealth*prefs.avoidHealth) return 1;
