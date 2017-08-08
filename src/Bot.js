@@ -52,7 +52,9 @@ class Bot {
 		this.enemy.update();
 		
 		this.stage = this.ui.stage;
-		this.stage.go();
+		if (!this.ui.busy) {
+			this.stage.go();
+		}
 		
 		setTimeout(this.update.bind(this), prefs.updateInterval*1 + random(prefs.updateIntervalRange*(-1), prefs.updateIntervalRange*1));
 	}

@@ -1,29 +1,8 @@
 let $ = document.querySelector.bind(document);
 let $$ = document.querySelectorAll.bind(document);
-// Element.prototype.$ = Element.prototype.querySelector;
-// Element.prototype.$$ = Element.prototype.querySelectorAll;
-
-// HTMLCollection.prototype.toArray = Array.prototype.slice;
-// NodeList.prototype.toArray = Array.prototype.slice;
-// NamedNodeMap.prototype.toArray = Array.prototype.slice;
 function toArray(collection) {
 	return Array.prototype.slice.call(collection);
 }
-
-// Node.prototype.replace = function(el) {
-	// this.parentNode.replaceChild(el, this);
-// }
-// Node.prototype.isChildOf = function(el) {
-	// return this.parentNode && this != document.body && this != document.body.parentNode && (this.parentNode == el || this.parentNode.isChildOf(el));
-// }
-// Node.prototype.parent = function(q) {
-	// if (this.parentElement.matches(q)) return this.parentElement;
-	// return this.parentElement.parent(q);
-// }
-// Node.prototype.getElement = function() {
-	// if (this instanceof Element) return this;
-	// return this.parentElement;
-// }
 
 let log = {
 	error: (...args) => { console.error.apply(console, ['[DRB]'].concat(args)); },
@@ -51,4 +30,16 @@ function click(el) {
 		evt.initMouseEvent(name, true, true, unsafeWindow, 1, x,y, x,y, false, false, false, false, 0, null);
 		el.dispatchEvent(evt);
     });
+}
+
+function getParams(url) {
+	url = url || location.search;
+	let params = {};
+	url.replace(/^.*?\?/, '').split('&').forEach(it=>{
+		let parts = it.split('=');
+		if (parts.length > 1) {
+			params[parts[0]] = parts[1];
+		}
+	});
+	return params;
 }

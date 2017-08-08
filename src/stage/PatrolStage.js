@@ -62,6 +62,8 @@ class PatrolStage extends Stage {
 			el: btn,
 			type: btn.getAttribute('data-type').toLowerCase()
 		}});
+		this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
+		if (!this.captcha) this.notified = false;
 	}
 	
 	go() {
@@ -77,8 +79,17 @@ class PatrolStage extends Stage {
 			this.enemy.type = target.type;
 			click(target.el);
 		}
+		// if the "i'm not a robot" captcha shows up, wait for user input
+		else if (this.captcha) {
+			log.log("🤖 I'm not a robot!");
+			if (!this.notified) {
+				new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
+				this.notified = true;
+			}
+		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
+			log.log('Lucky Day');
 			let modalConfirm = $('.actions-modal-button');
 			if (modalConfirm) {
 				click(modalConfirm);

@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.16
+// @version      1.17
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -19,6 +19,10 @@
 	${include-once: PrefsGUI.js}
 	${include-once: helpers.js}
 	${include-once: Bot.js}
+	
+	log.log('Hi');
+	
+	Notification.requestPermission();
 	
 	let bot = new Bot();
 	

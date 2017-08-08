@@ -8,4 +8,7 @@ class UI {
 			return page.getAttribute('data-page').toLowerCase();
 		}
 	}
+	get busy() {
+		return this.page.querySelector('.preloader-indicator-overlay') != null;
+	}
 }

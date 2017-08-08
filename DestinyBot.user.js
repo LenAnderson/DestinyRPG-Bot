@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.16
+// @version      1.17
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -117,30 +117,9 @@ if (sprefs) {
 }
 	let $ = document.querySelector.bind(document);
 let $$ = document.querySelectorAll.bind(document);
-// Element.prototype.$ = Element.prototype.querySelector;
-// Element.prototype.$$ = Element.prototype.querySelectorAll;
-
-// HTMLCollection.prototype.toArray = Array.prototype.slice;
-// NodeList.prototype.toArray = Array.prototype.slice;
-// NamedNodeMap.prototype.toArray = Array.prototype.slice;
 function toArray(collection) {
 	return Array.prototype.slice.call(collection);
 }
-
-// Node.prototype.replace = function(el) {
-	// this.parentNode.replaceChild(el, this);
-// }
-// Node.prototype.isChildOf = function(el) {
-	// return this.parentNode && this != document.body && this != document.body.parentNode && (this.parentNode == el || this.parentNode.isChildOf(el));
-// }
-// Node.prototype.parent = function(q) {
-	// if (this.parentElement.matches(q)) return this.parentElement;
-	// return this.parentElement.parent(q);
-// }
-// Node.prototype.getElement = function() {
-	// if (this instanceof Element) return this;
-	// return this.parentElement;
-// }
 
 let log = {
 	error: (...args) => { console.error.apply(console, ['[DRB]'].concat(args)); },
@@ -169,6 +148,18 @@ function click(el) {
 		el.dispatchEvent(evt);
     });
 }
+
+function getParams(url) {
+	url = url || location.search;
+	let params = {};
+	url.replace(/^.*?\?/, '').split('&').forEach(it=>{
+		let parts = it.split('=');
+		if (parts.length > 1) {
+			params[parts[0]] = parts[1];
+		}
+	});
+	return params;
+}
 	class UI {
 	get page() {
 		return $('body > .views > .view > .pages > .page.page-on-center') || $('body > .views > .view > .pages > .page[data-page="index-1"]');
@@ -178,6 +169,9 @@ function click(el) {
 		if (page) {
 			return page.getAttribute('data-page').toLowerCase();
 		}
+	}
+	get busy() {
+		return this.page.querySelector('.preloader-indicator-overlay') != null;
 	}
 }
 class Player {
@@ -348,6 +342,8 @@ class PatrolStage extends Stage {
 			el: btn,
 			type: btn.getAttribute('data-type').toLowerCase()
 		}});
+		this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
+		if (!this.captcha) this.notified = false;
 	}
 	
 	go() {
@@ -363,8 +359,17 @@ class PatrolStage extends Stage {
 			this.enemy.type = target.type;
 			click(target.el);
 		}
+		// if the "i'm not a robot" captcha shows up, wait for user input
+		else if (this.captcha) {
+			log.log("🤖 I'm not a robot!");
+			if (!this.notified) {
+				new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
+				this.notified = true;
+			}
+		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
+			log.log('Lucky Day');
 			let modalConfirm = $('.actions-modal-button');
 			if (modalConfirm) {
 				click(modalConfirm);
@@ -588,7 +593,9 @@ class Bot {
 		this.enemy.update();
 		
 		this.stage = this.ui.stage;
-		this.stage.go();
+		if (!this.ui.busy) {
+			this.stage.go();
+		}
 		
 		setTimeout(this.update.bind(this), prefs.updateInterval*1 + random(prefs.updateIntervalRange*(-1), prefs.updateIntervalRange*1));
 	}
@@ -600,6 +607,10 @@ class Bot {
 		this.update();
 	}
 }
+	
+	log.log('Hi');
+	
+	Notification.requestPermission();
 	
 	let bot = new Bot();
 	
