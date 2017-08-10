@@ -55,8 +55,11 @@ You can customize some of the bot's behavior. In the Tampermonkey / Greasemonkey
   - **Don't Change Region** When traveling, don't change the region (e.g. The City, Old Russia, Old Chicago, ...).
 - **Patrol**
   - **Max Times Looking Around Before Travel** Number of times the *Seach Nearby* button is clicked before going somewhere else.
-  - **Avoid Enemies With x Times Player's Health** Enemies with health or shield this number of times as high as the player's health are put to the bottom of the list when prioritizing enemies to attack. If your health is 1000 and this value is set to 10 enemies with 10000 HP or SH are attacked only if no other enemies are available.
   - **Lucky Day Bonus** The bonus / boost to pick when the "It's your lucky day" prompt appears.
+  - **Avoid Enemies With x Times Player's Health** Enemies with health or shield this number of times as high as the player's health are put to the bottom of the list when prioritizing enemies to attack. If your health is 1000 and this value is set to 10 enemies with 10000 HP or SH are attacked only if no other enemies are available.
+  - **Attack Enemies** You will only attack the selected enemy types. The bounty setting takes precedence over this setting.
+  - **Only Attack Enemies With A Bounty** When you have active bounties, only those enemies will be attacked.
+  - **When Focussing On Bounties Also Attack Chests** When you have active bounties and only attack those enemies, also attack chests / caches
 - **Battle**
   - **Take Cover At (% max health)** If your health goes below this percentage of max health you take cover.
   - **Run Away At (% max health)** If your health goes below this percentage of max health you run away from the fight.
