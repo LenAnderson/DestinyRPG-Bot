@@ -34,14 +34,6 @@
 		<input type="number" min="1" max="10000" id="maxScan">
 	</p>
 	<p>
-		<label for="attackUltraPe">Attack Red Skulls (Ultra PE)</label>
-		<input type="checkbox" id="attackUltraPe">
-	</p>
-	<p>
-		<label for="avoidHealth">Avoid Enemies With x Times Player's Health</label>
-		<input type="number" min="1" max="10000" id="avoidHealth">
-	</p>
-	<p>
 		<label for="luckyDay">Lucky Day Bonus</label>
 		<select id="luckyDay">
 			<option value="xp">XP</option>
@@ -49,6 +41,18 @@
 			<option value="glimmer">Glimmer</option>
 		</select>
 	</p>
+	<p>
+		<label for="avoidHealth">Avoid Enemies With x Times Player's Health</label>
+		<input type="number" min="1" max="10000" id="avoidHealth">
+	</p>
+	<p>
+		<label>Attack Enemies</label>
+		<span class="checkboxGroup">
+			<span class="checkboxGroup-item"><input type="checkbox" name="attack[]" value="normal" id="attack-normal"> <label for="attack-normal">Normals</label></span><br>
+			<span class="checkboxGroup-item"><input type="checkbox" name="attack[]" value="currency" id="attack-currency"> <label for="attack-currency">Chests</label></span><br>
+			<span class="checkboxGroup-item"><input type="checkbox" name="attack[]" value="ultra" id="attack-ultra"> <label for="attack-ultra">White Skulls</label></span><br>
+			<span class="checkboxGroup-item"><input type="checkbox" name="attack[]" value="ultra-pe" id="attack-ultraPe"> <label for="attack-ultraPe">Red Skulls</label></span><br>
+		</span>
 	<p>
 		<label for="onlyBounties">Only Attack Enemies With A Bounty</label>
 		<input type="checkbox" id="onlyBounties">

@@ -28,9 +28,12 @@ section > p {
 	border-bottom: 1px solid rgb(57, 57, 57);
 	margin: 20px 0;
 }
-section > p > label {
+section > p label[for] {
 	cursor: pointer;
+}
+section > p > label {
 	display: inline-block;
+	vertical-align: top;
 	width: 400px;
 }
 section > p > input {
@@ -41,6 +44,12 @@ section > p > input {
 }
 section > p > input[type="number"] {
 	text-align: right;
+}
+section > p > .checkboxGroup {
+	display: inline-block;
+}
+section > p > .checkboxGroup > .checkboxGroup-item {
+	display: inline-block;
 }
 
 section.actions {

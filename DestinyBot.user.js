@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.17
+// @version      1.18
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -32,9 +32,13 @@
 	
 	// patrol
 	maxScan: 5,
-	attackUltraPe: false,
 	avoidHealth: 10,
 	luckyDay: 'glimmer',
+	attack: [
+		'normal',
+		'currency',
+		'ultra'
+	],
 	onlyBounties: true,
 	bountiesAndChests: true,
 	
@@ -61,50 +65,33 @@ if (sprefs) {
 			this.window.focus();
 			return;
 		}
-		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=550,centerscreen,menubar=no,toolbar=no,location=no');
+		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=555,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
-		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p > label {cursor: pointer;display: inline-block;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"attackUltraPe\">Attack Red Skulls (Ultra PE)</label><input type=\"checkbox\" id=\"attackUltraPe\"></p><p><label for=\"avoidHealth\">Avoid Enemies With x Times Player\'s Health</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"avoidHealth\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></p><p><label for=\"onlyBounties\">Only Attack Enemies With A Bounty</label><input type=\"checkbox\" id=\"onlyBounties\"></p><p><label for=\"bountiesAndChests\">When Focussing On Bounties Also Attack Chests</label><input type=\"checkbox\" id=\"bountiesAndChests\"></p></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
+		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p label[for] {cursor: pointer;}section > p > label {display: inline-block;vertical-align: top;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section > p > .checkboxGroup {display: inline-block;}section > p > .checkboxGroup > .checkboxGroup-item {display: inline-block;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></p><p><label for=\"avoidHealth\">Avoid Enemies With x Times Player\'s Health</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"avoidHealth\"></p><p><label>Attack Enemies</label><span class=\"checkboxGroup\"><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"normal\" id=\"attack-normal\"> <label for=\"attack-normal\">Normals</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"currency\" id=\"attack-currency\"> <label for=\"attack-currency\">Chests</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra\" id=\"attack-ultra\"> <label for=\"attack-ultra\">White Skulls</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra-pe\" id=\"attack-ultraPe\"> <label for=\"attack-ultraPe\">Red Skulls</label></span><br></span><p><label for=\"onlyBounties\">Only Attack Enemies With A Bounty</label><input type=\"checkbox\" id=\"onlyBounties\"></p><p><label for=\"bountiesAndChests\">When Focussing On Bounties Also Attack Chests</label><input type=\"checkbox\" id=\"bountiesAndChests\"></p></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
 		
 		this.dom.updateInterval = this.body.querySelector('#updateInterval');
 		this.dom.updateIntervalRange = this.body.querySelector('#updateIntervalRange');
 		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
 		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
 		this.dom.maxScan = this.body.querySelector('#maxScan');
-		this.dom.attackUltraPe = this.body.querySelector('#attackUltraPe');
 		this.dom.avoidHealth = this.body.querySelector('#avoidHealth');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
+		this.dom.attack = toArray(this.body.querySelectorAll('[name="attack[]"]'));
 		this.dom.onlyBounties = this.body.querySelector('#onlyBounties');
 		this.dom.bountiesAndChests = this.body.querySelector('#bountiesAndChests');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
 		
-		Object.keys(this.dom).forEach((key) => {
-			switch (this.dom[key].type) {
-				case 'checkbox':
-					this.dom[key].checked = this.dom[key].value = prefs[key];
-					break;
-				default:
-					this.dom[key].value = prefs[key];
-					break;
-			}
-		});
+		this.setDomValues()
+		
 		
 		this.body.querySelector('#save').addEventListener('click', this.save.bind(this));
 		this.body.querySelector('#cancel').addEventListener('click', this.close.bind(this));
 	}
 	
 	save() {
-		Object.keys(this.dom).forEach((key) => {
-			switch (this.dom[key].type) {
-				case 'checkbox':
-					prefs[key] = this.dom[key].checked;
-					break;
-				default:
-					prefs[key] = this.dom[key].value;
-					break;
-			}
-		});
+		this.getDomValues();
 		GM_setValue('drb_prefs', JSON.stringify(prefs));
 		this.close();
 	}
@@ -113,6 +100,46 @@ if (sprefs) {
 	}
 	closed() {
 		this.window = undefined;
+	}
+	
+	
+	setDomValues(dom, prefsCol) {
+		dom = dom || this.dom;
+		prefsCol = prefsCol || prefs;
+		Object.keys(dom).forEach((key) => {
+			if (dom[key] instanceof Array) {
+				dom[key].forEach((sdom) => {
+					sdom.checked = prefsCol[key].indexOf(sdom.value) > -1;
+				})
+			} else {
+				switch (dom[key].type) {
+					case 'checkbox':
+						dom[key].checked = prefsCol[key];
+						break;
+					default:
+						dom[key].value = prefsCol[key];
+						break;
+				}
+			}
+		});
+	}
+	getDomValues(dom, prefsCol) {
+		dom = dom || this.dom;
+		prefsCol = prefsCol || prefs;
+		Object.keys(dom).forEach((key) => {
+			if (dom[key] instanceof Array) {
+				prefsCol[key] = dom[key].filter((sdom) => { return sdom.checked; }).map((sdom) => { return sdom.value; });
+			} else {
+				switch (dom[key].type) {
+					case 'checkbox':
+						prefsCol[key] = dom[key].checked;
+						break;
+					default:
+						prefsCol[key] = dom[key].value;
+						break;
+				}
+			}
+		});
 	}
 }
 	let $ = document.querySelector.bind(document);
@@ -304,10 +331,21 @@ class PatrolStage extends Stage {
 				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 			}
 		}).filter((t) => {
-			let result = (t.type != 'ultra-pe' || prefs.attackUltraPe) // remove ultras
-							&& t.el.getAttribute('disabled') == null // remove disabled
-							&& (!prefs.onlyBounties || (this.bounties.length == 0 || this.bounties.indexOf(t.name) > -1 || (t.type == 'currency' && prefs.bountiesAndChests))); // remove non-bounties
-			return result;
+			// remove disabled
+			if (t.el.getAttribute('disabled')) return false;
+			// if bounty-focus and active bounties...
+			if (prefs.onlyBounties && this.bounties.length > 0) {
+				// keep enemy with bounty
+				if (this.bounties.indexOf(t.name) > -1) return true;
+				// if bounty+chest: keep chests
+				if (prefs.bountiesAndChests && t.type == 'currency') return true;
+				// remove all else
+				return false;
+			}
+			// if enemy types are selected, keep those
+			if (prefs.attack.length == 0 || prefs.attack.indexOf(t.type) > -1) return true;
+			// remove all else
+			return false;
 		});
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
@@ -353,6 +391,7 @@ class PatrolStage extends Stage {
 		
 		// attack the first enemy
 		if (this.targets.length > 0) {
+			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
 			let target = this.targets[0];
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
 			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');

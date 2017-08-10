@@ -24,10 +24,21 @@ class PatrolStage extends Stage {
 				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
 			}
 		}).filter((t) => {
-			let result = (t.type != 'ultra-pe' || prefs.attackUltraPe) // remove ultras
-							&& t.el.getAttribute('disabled') == null // remove disabled
-							&& (!prefs.onlyBounties || (this.bounties.length == 0 || this.bounties.indexOf(t.name) > -1 || (t.type == 'currency' && prefs.bountiesAndChests))); // remove non-bounties
-			return result;
+			// remove disabled
+			if (t.el.getAttribute('disabled')) return false;
+			// if bounty-focus and active bounties...
+			if (prefs.onlyBounties && this.bounties.length > 0) {
+				// keep enemy with bounty
+				if (this.bounties.indexOf(t.name) > -1) return true;
+				// if bounty+chest: keep chests
+				if (prefs.bountiesAndChests && t.type == 'currency') return true;
+				// remove all else
+				return false;
+			}
+			// if enemy types are selected, keep those
+			if (prefs.attack.length == 0 || prefs.attack.indexOf(t.type) > -1) return true;
+			// remove all else
+			return false;
 		});
 		this.targets.sort((a,b) => {
 			// prioritize chests and caches
@@ -73,6 +84,7 @@ class PatrolStage extends Stage {
 		
 		// attack the first enemy
 		if (this.targets.length > 0) {
+			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
 			let target = this.targets[0];
 			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
 			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');

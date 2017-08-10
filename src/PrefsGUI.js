@@ -9,7 +9,7 @@ class PrefsGUI {
 			this.window.focus();
 			return;
 		}
-		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=550,centerscreen,menubar=no,toolbar=no,location=no');
+		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=555,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
 		this.body.innerHTML = '${include-min-esc: html/prefs.html}';
@@ -19,40 +19,23 @@ class PrefsGUI {
 		this.dom.stayInLocation = this.body.querySelector('#stayInLocation');
 		this.dom.stayInRegion = this.body.querySelector('#stayInRegion');
 		this.dom.maxScan = this.body.querySelector('#maxScan');
-		this.dom.attackUltraPe = this.body.querySelector('#attackUltraPe');
 		this.dom.avoidHealth = this.body.querySelector('#avoidHealth');
 		this.dom.luckyDay = this.body.querySelector('#luckyDay');
+		this.dom.attack = toArray(this.body.querySelectorAll('[name="attack[]"]'));
 		this.dom.onlyBounties = this.body.querySelector('#onlyBounties');
 		this.dom.bountiesAndChests = this.body.querySelector('#bountiesAndChests');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
 		
-		Object.keys(this.dom).forEach((key) => {
-			switch (this.dom[key].type) {
-				case 'checkbox':
-					this.dom[key].checked = this.dom[key].value = prefs[key];
-					break;
-				default:
-					this.dom[key].value = prefs[key];
-					break;
-			}
-		});
+		this.setDomValues()
+		
 		
 		this.body.querySelector('#save').addEventListener('click', this.save.bind(this));
 		this.body.querySelector('#cancel').addEventListener('click', this.close.bind(this));
 	}
 	
 	save() {
-		Object.keys(this.dom).forEach((key) => {
-			switch (this.dom[key].type) {
-				case 'checkbox':
-					prefs[key] = this.dom[key].checked;
-					break;
-				default:
-					prefs[key] = this.dom[key].value;
-					break;
-			}
-		});
+		this.getDomValues();
 		GM_setValue('drb_prefs', JSON.stringify(prefs));
 		this.close();
 	}
@@ -61,5 +44,45 @@ class PrefsGUI {
 	}
 	closed() {
 		this.window = undefined;
+	}
+	
+	
+	setDomValues(dom, prefsCol) {
+		dom = dom || this.dom;
+		prefsCol = prefsCol || prefs;
+		Object.keys(dom).forEach((key) => {
+			if (dom[key] instanceof Array) {
+				dom[key].forEach((sdom) => {
+					sdom.checked = prefsCol[key].indexOf(sdom.value) > -1;
+				})
+			} else {
+				switch (dom[key].type) {
+					case 'checkbox':
+						dom[key].checked = prefsCol[key];
+						break;
+					default:
+						dom[key].value = prefsCol[key];
+						break;
+				}
+			}
+		});
+	}
+	getDomValues(dom, prefsCol) {
+		dom = dom || this.dom;
+		prefsCol = prefsCol || prefs;
+		Object.keys(dom).forEach((key) => {
+			if (dom[key] instanceof Array) {
+				prefsCol[key] = dom[key].filter((sdom) => { return sdom.checked; }).map((sdom) => { return sdom.value; });
+			} else {
+				switch (dom[key].type) {
+					case 'checkbox':
+						prefsCol[key] = dom[key].checked;
+						break;
+					default:
+						prefsCol[key] = dom[key].value;
+						break;
+				}
+			}
+		});
 	}
 }
