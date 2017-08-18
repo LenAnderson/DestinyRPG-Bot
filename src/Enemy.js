@@ -18,11 +18,11 @@ class Enemy {
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
 			let healthImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-hp3.png"]');
-			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim()*1;
+			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim().replace(/,/g,'')*1;
 			else this.health = 0;
 			
 			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
-			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim()*1;
+			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim().replace(/,/g,'')*1;
 			else this.shield = 0;
 		}
 	}
@@ -31,7 +31,7 @@ class Enemy {
 		if (this.ui.stage == config.stage.battle) {
 			let el = this.ui.page.querySelector('.enemyInfo > strong');
 			if (el) {
-				let dam = el.textContent.trim()*1;
+				let dam = el.textContent.trim().replace(/,/g,'')*1;
 				this.minDamage = Math.min(this.minDamage, dam);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}

@@ -31,7 +31,7 @@ class Player {
 		if (this.ui.stage == config.stage.battle) {
 			let el = this.ui.page.querySelector('.playerInfo > strong');
 			if (el) {
-				let dam = el.textContent.trim()*1 || 0;
+				let dam = el.textContent.trim().replace(/,/g,'')*1 || 0;
 				this.minDamage = Math.min(this.minDamage, dam||this.minDamage);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}
