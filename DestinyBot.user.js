@@ -2,10 +2,11 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.18
+// @version      1.19
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
+// @match        https://www.google.com/recaptcha/api2/anchor*
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_setValue
@@ -234,7 +235,7 @@ class Player {
 		if (this.ui.stage == config.stage.battle) {
 			let el = this.ui.page.querySelector('.playerInfo > strong');
 			if (el) {
-				let dam = el.textContent.trim()*1 || 0;
+				let dam = el.textContent.trim().replace(/,/g,'')*1 || 0;
 				this.minDamage = Math.min(this.minDamage, dam||this.minDamage);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}
@@ -261,11 +262,11 @@ class Enemy {
 	updateHealth() {
 		if (this.ui.stage == config.stage.battle) {
 			let healthImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-hp3.png"]');
-			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim()*1;
+			if (healthImg) this.health = healthImg.previousElementSibling.textContent.trim().replace(/,/g,'')*1;
 			else this.health = 0;
 			
 			let shieldImg = this.ui.page.querySelector('.enemyInfo > img[src*="icon-shield.png"]');
-			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim()*1;
+			if (shieldImg) this.shield = shieldImg.previousSibling.textContent.trim().replace(/,/g,'')*1;
 			else this.shield = 0;
 		}
 	}
@@ -274,7 +275,7 @@ class Enemy {
 		if (this.ui.stage == config.stage.battle) {
 			let el = this.ui.page.querySelector('.enemyInfo > strong');
 			if (el) {
-				let dam = el.textContent.trim()*1;
+				let dam = el.textContent.trim().replace(/,/g,'')*1;
 				this.minDamage = Math.min(this.minDamage, dam);
 				this.maxDamage = Math.max(this.maxDamage, dam);
 			}
@@ -312,6 +313,13 @@ class PatrolStage extends Stage {
 		this.bounties = [];
 		this.scanned = 0;
 		this.player.died = false;
+		this.luckyDayWait = 0;
+		this.luckyDay = [];
+		this.captcha = null;
+		this.captchaChallenge = null;
+		this.notified = false;
+		GM_setValue('drb_captcha', '');
+		GM_setValue('drb_captcha_solved', '');
 	}
 	
 	updateBounties() {
@@ -380,8 +388,25 @@ class PatrolStage extends Stage {
 			el: btn,
 			type: btn.getAttribute('data-type').toLowerCase()
 		}});
-		this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
-		if (!this.captcha) this.notified = false;
+		if (this.luckyDay.length <= 0) {
+			this.luckyDayWait = 0;
+		} else {
+			this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
+			if (this.captcha) {
+				let params = getParams(this.captcha.src);
+				let key = params.k + '&' + params.v;
+				if (GM_getValue('drb_captcha_solved') == key) {
+					this.captcha = null;
+				} else {
+					GM_setValue('drb_captcha', key);
+				}
+			}
+			let challenges = toArray($$('iframe[title="recaptcha challenge"]'));
+			if (challenges.length > 0) {
+				this.captchaChallenge = challenges.filter(challenge=>{return getComputedStyle(challenge).visibility != 'hidden';}).length > 0;
+			}
+			if (!this.captcha) this.notified = false;
+		}
 	}
 	
 	go() {
@@ -401,19 +426,26 @@ class PatrolStage extends Stage {
 		// if the "i'm not a robot" captcha shows up, wait for user input
 		else if (this.captcha) {
 			log.log("🤖 I'm not a robot!");
-			if (!this.notified) {
-				new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
+			this.luckyDayWait = 0;
+			if (GM_getValue('drb_captcha_solved') == GM_getValue('drb_captcha')) {
+				log.log('🤖 captcha solved');
+			} else if (!this.notified && this.captchaChallenge) {
+				this.captchaNotification = new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
 				this.notified = true;
 			}
 		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
 			log.log('Lucky Day');
-			let modalConfirm = $('.actions-modal-button');
-			if (modalConfirm) {
-				click(modalConfirm);
+			if (this.luckyDayWait++ < 5) {
+				log.log('waiting to check for captcha');
 			} else {
-				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
+				let modalConfirm = $('.actions-modal-button');
+				if (modalConfirm) {
+					click(modalConfirm);
+				} else {
+					click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
+				}
 			}
 		}
 		// if number if times "looking around" is higher then the max from preferences: travel
@@ -647,24 +679,44 @@ class Bot {
 	}
 }
 	
-	log.log('Hi');
 	
-	Notification.requestPermission();
+	log.log('Hi', location.href);
 	
-	let bot = new Bot();
 	
-	let prefsGUI = new PrefsGUI();
-	GM_registerMenuCommand('[DRB] Preferences', prefsGUI.show.bind(prefsGUI));
-	let cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
-	let cmdUnpause;
-	function pause() {
-		bot.pause();
-		GM_unregisterMenuCommand(cmdPause);
-		cmdUnpause = GM_registerMenuCommand('[DRB] Unpause Bot', unpause);
-	}
-	function unpause() {
-		bot.unpause();
-		GM_unregisterMenuCommand(cmdUnpause);
-		cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
+	if (location.href.search('https://www.google.com/recaptcha/api2/anchor') > -1) {
+		let clicked = false;
+		let iv = setInterval(()=>{
+			let params = getParams();
+			let box = $('.recaptcha-checkbox');
+			if (params.k + '&' + params.v == GM_getValue('drb_captcha')) {
+				if (!clicked && box.getAttribute('aria-checked') == 'false') {
+					log.log('need to solve this captcha...');
+					click(box);
+					clicked = true;
+				} else if (box.getAttribute('aria-checked') == 'true') {
+					log.log('yay! solved the captcha');
+					GM_setValue('drb_captcha_solved', params.k + '&' + params.v);
+				}
+			}
+		}, 2000);
+	} else {
+		Notification.requestPermission();
+		
+		let bot = new Bot();
+		
+		let prefsGUI = new PrefsGUI();
+		GM_registerMenuCommand('[DRB] Preferences', prefsGUI.show.bind(prefsGUI));
+		let cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
+		let cmdUnpause;
+		function pause() {
+			bot.pause();
+			GM_unregisterMenuCommand(cmdPause);
+			cmdUnpause = GM_registerMenuCommand('[DRB] Unpause Bot', unpause);
+		}
+		function unpause() {
+			bot.unpause();
+			GM_unregisterMenuCommand(cmdUnpause);
+			cmdPause = GM_registerMenuCommand('[DRB] Pause Bot', pause);
+		}
 	}
 })();
