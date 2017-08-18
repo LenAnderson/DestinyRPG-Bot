@@ -5,6 +5,13 @@ class PatrolStage extends Stage {
 		this.bounties = [];
 		this.scanned = 0;
 		this.player.died = false;
+		this.luckyDayWait = 0;
+		this.luckyDay = [];
+		this.captcha = null;
+		this.captchaChallenge = null;
+		this.notified = false;
+		GM_setValue('drb_captcha', '');
+		GM_setValue('drb_captcha_solved', '');
 	}
 	
 	updateBounties() {
@@ -73,8 +80,25 @@ class PatrolStage extends Stage {
 			el: btn,
 			type: btn.getAttribute('data-type').toLowerCase()
 		}});
-		this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
-		if (!this.captcha) this.notified = false;
+		if (this.luckyDay.length <= 0) {
+			this.luckyDayWait = 0;
+		} else {
+			this.captcha = this.ui.page.querySelector('.g-recaptcha iframe');
+			if (this.captcha) {
+				let params = getParams(this.captcha.src);
+				let key = params.k + '&' + params.v;
+				if (GM_getValue('drb_captcha_solved') == key) {
+					this.captcha = null;
+				} else {
+					GM_setValue('drb_captcha', key);
+				}
+			}
+			let challenges = toArray($$('iframe[title="recaptcha challenge"]'));
+			if (challenges.length > 0) {
+				this.captchaChallenge = challenges.filter(challenge=>{return getComputedStyle(challenge).visibility != 'hidden';}).length > 0;
+			}
+			if (!this.captcha) this.notified = false;
+		}
 	}
 	
 	go() {
@@ -94,19 +118,26 @@ class PatrolStage extends Stage {
 		// if the "i'm not a robot" captcha shows up, wait for user input
 		else if (this.captcha) {
 			log.log("🤖 I'm not a robot!");
-			if (!this.notified) {
-				new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
+			this.luckyDayWait = 0;
+			if (GM_getValue('drb_captcha_solved') == GM_getValue('drb_captcha')) {
+				log.log('🤖 captcha solved');
+			} else if (!this.notified && this.captchaChallenge) {
+				this.captchaNotification = new Notification("[DRB] 🤖 I'm not a robot!", {body: 'You need to solve the captcha for the bot to continue.'});
 				this.notified = true;
 			}
 		}
 		// if there is a "lucky day" prompt, choose the preferred boost
 		else if (this.luckyDay.length > 0) {
 			log.log('Lucky Day');
-			let modalConfirm = $('.actions-modal-button');
-			if (modalConfirm) {
-				click(modalConfirm);
+			if (this.luckyDayWait++ < 5) {
+				log.log('waiting to check for captcha');
 			} else {
-				click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
+				let modalConfirm = $('.actions-modal-button');
+				if (modalConfirm) {
+					click(modalConfirm);
+				} else {
+					click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
+				}
 			}
 		}
 		// if number if times "looking around" is higher then the max from preferences: travel
