@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.19
+// @version      1.20
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -42,10 +42,13 @@
 	],
 	onlyBounties: true,
 	bountiesAndChests: true,
+	bountiesAndUltras: true,
 	
 	// battle
 	coverAt: 50,
-	runAt: 20
+	runAt: 20,
+	heavyAll: false,
+	ultraAll: false
 };
 let sprefs = JSON.parse(GM_getValue('drb_prefs')||'false');
 if (sprefs) {
@@ -69,7 +72,7 @@ if (sprefs) {
 		this.window = open('about:blank', 'DestinyRPG Bot - Preferences', 'resizable,innerHeight=800,innerWidth=555,centerscreen,menubar=no,toolbar=no,location=no');
 		this.window.addEventListener('unload', this.closed.bind(this));
 		this.body = this.window.document.body;
-		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p label[for] {cursor: pointer;}section > p > label {display: inline-block;vertical-align: top;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section > p > .checkboxGroup {display: inline-block;}section > p > .checkboxGroup > .checkboxGroup-item {display: inline-block;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></p><p><label for=\"avoidHealth\">Avoid Enemies With x Times Player\'s Health</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"avoidHealth\"></p><p><label>Attack Enemies</label><span class=\"checkboxGroup\"><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"normal\" id=\"attack-normal\"> <label for=\"attack-normal\">Normals</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"currency\" id=\"attack-currency\"> <label for=\"attack-currency\">Chests</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra\" id=\"attack-ultra\"> <label for=\"attack-ultra\">White Skulls</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra-pe\" id=\"attack-ultraPe\"> <label for=\"attack-ultraPe\">Red Skulls</label></span><br></span><p><label for=\"onlyBounties\">Only Attack Enemies With A Bounty</label><input type=\"checkbox\" id=\"onlyBounties\"></p><p><label for=\"bountiesAndChests\">When Focussing On Bounties Also Attack Chests</label><input type=\"checkbox\" id=\"bountiesAndChests\"></p></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
+		this.body.innerHTML = '<style>body {background-color: rgb(34, 36, 38);color: rgb(221, 221, 221);font-family: -apple-system,SF UI Text,Helvetica Neue,Helvetica,Arial,sans-serif;font-size: 17px;line-height: 1.4;}h1 {color: rgb(255, 255, 255);font-size: 17px;font-weight: bold;line-height: 44px;}h2 {color: rgb(255, 255, 255);font-size: 17px;font-weight: normal;line-height: 1.2;margin: 0;}section {margin: 10px 0 40px 0;}section > p {background-color: rgba(28, 29, 31, 0.5);border-bottom: 1px solid rgb(57, 57, 57);margin: 20px 0;}section > p label[for] {cursor: pointer;}section > p > label {display: inline-block;vertical-align: top;width: 400px;}section > p > input {background-color: transparent;border: none;color: rgb(255, 255, 255);font: inherit;}section > p > input[type=\"number\"] {text-align: right;}section > p > .checkboxGroup {display: inline-block;}section > p > .checkboxGroup > .checkboxGroup-item {display: inline-block;}section.actions {text-align: right;}section.actions > button {background-color: rgb(51, 0, 0);border: 1px solid rgb(102, 0, 0);border-radius: 4px;box-sizing: border-box;color: rgb(255, 255, 255);cursor: pointer;font-size: 14px;height: 29px;line-height: 27px;margin: 0 10px;padding: 0 10px;width: 100px;}section.actions > button#save {background-color: rgb(0, 51, 0);border-color: rgb(0, 102, 0);}</style><h1>DestinyRPG Bot - Preferences</h1><section><p><label for=\"updateInterval\">Update Interval (ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateInterval\"></p><p><label for=\"updateIntervalRange\">Update Interval Range (±ms)</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"updateIntervalRange\"></p></section><section><h2>Travel</h2><p><label for=\"stayInLocation\">Don\'t Change Location</label><input type=\"checkbox\" id=\"stayInLocation\"></p><p><label for=\"stayInRegion\">Don\'t Change Region</label><input type=\"checkbox\" id=\"stayInRegion\"></p></section><section><h2>Patrol</h2><p><label for=\"maxScan\">Max Times Looking Around Before Travel</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"maxScan\"></p><p><label for=\"luckyDay\">Lucky Day Bonus</label><select id=\"luckyDay\"><option value=\"xp\">XP</option><option value=\"lp\">LP</option><option value=\"glimmer\">Glimmer</option></select></p><p><label for=\"avoidHealth\">Avoid Enemies With x Times Player\'s Health</label><input type=\"number\" min=\"1\" max=\"10000\" id=\"avoidHealth\"></p><p><label>Attack Enemies</label><span class=\"checkboxGroup\"><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"normal\" id=\"attack-normal\"> <label for=\"attack-normal\">Normals</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"currency\" id=\"attack-currency\"> <label for=\"attack-currency\">Chests</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra\" id=\"attack-ultra\"> <label for=\"attack-ultra\">White Skulls</label></span><br><span class=\"checkboxGroup-item\"><input type=\"checkbox\" name=\"attack[]\" value=\"ultra-pe\" id=\"attack-ultraPe\"> <label for=\"attack-ultraPe\">Red Skulls</label></span><br></span><p><label for=\"onlyBounties\">Only Attack Enemies With A Bounty</label><input type=\"checkbox\" id=\"onlyBounties\"></p><p><label for=\"bountiesAndChests\">When Focussing On Bounties Also Attack Chests</label><input type=\"checkbox\" id=\"bountiesAndChests\"></p><p><label for=\"bountiesAndUltras\">When Focussing On Bounties Also Attack Ultras</label><input type=\"checkbox\" id=\"bountiesAndUltras\"></p></section><section><h2>Battle</h2><p><label for=\"coverAt\">Take Cover At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"coverAt\"></p><p><label for=\"runAt\">Run Away At (% max health)</label><input type=\"number\" min=\"1\" max=\"99\" id=\"runAt\"></p><p><label for=\"heavyAll\">Use Heavy Attack On All Enemies</label><input type=\"checkbox\" id=\"heavyAll\"></p><p><label for=\"ultraAll\">Use Ultra Attack On All Enemies</label><input type=\"checkbox\" id=\"ultraAll\"></p></section><section class=\"actions\"><button id=\"save\">Save</button><button id=\"cancel\">Cancel</button></section>';
 		
 		this.dom.updateInterval = this.body.querySelector('#updateInterval');
 		this.dom.updateIntervalRange = this.body.querySelector('#updateIntervalRange');
@@ -81,10 +84,13 @@ if (sprefs) {
 		this.dom.attack = toArray(this.body.querySelectorAll('[name="attack[]"]'));
 		this.dom.onlyBounties = this.body.querySelector('#onlyBounties');
 		this.dom.bountiesAndChests = this.body.querySelector('#bountiesAndChests');
+		this.dom.bountiesAndUltras = this.body.querySelector('#bountiesAndUltras');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
+		this.dom.heavyAll = this.body.querySelector('#heavyAll');
+		this.dom.ultraAll = this.body.querySelector('#ultraAll');
 		
-		this.setDomValues()
+		this.setDomValues();
 		
 		
 		this.body.querySelector('#save').addEventListener('click', this.save.bind(this));
@@ -193,13 +199,23 @@ function getParams(url) {
 		return $('body > .views > .view > .pages > .page.page-on-center') || $('body > .views > .view > .pages > .page[data-page="index-1"]');
 	}
 	get stage() {
-		let page = this.page;
-		if (page) {
-			return page.getAttribute('data-page').toLowerCase();
+		if (this.page) {
+			return this.page.getAttribute('data-page').toLowerCase();
 		}
+		return '';
 	}
 	get busy() {
-		return this.page.querySelector('.preloader-indicator-overlay') != null;
+		if (this.page) {
+			return this.page.querySelector('.preloader-indicator-overlay') != null;
+		}
+		return false;
+	}
+	get location() {
+		let el = $('body > .views > .view > .navbar > .navbar-inner.navbar-on-center > .center.sliding');
+		if (el) {
+			return el.textContent.trim().replace(/^Patrolling\s+/, '');
+		}
+		return '';
 	}
 }
 class Player {
@@ -323,7 +339,7 @@ class PatrolStage extends Stage {
 	}
 	
 	updateBounties() {
-		this.bounties = toArray(document.querySelectorAll('#progressItems > .card')).filter(it=>{return it.textContent.search('Bounty:')>-1;}).map(it=>{return it.textContent.trim().replace(/^.+\d+\s*\/\s*\d+\s*(.+?)\s*\(.+$/, '$1');});
+		this.bounties = toArray(this.ui.page.querySelectorAll('#progressItems > .card')).filter(it=>{return it.textContent.search('Bounty:')>-1;}).map(it=>{return it.textContent.trim().replace(/^.+\d+\s*\/\s*\d+\s*(.+?)\s*\(.+$/, '$1');});
 	}
 	
 	updateTargets() {
@@ -347,6 +363,8 @@ class PatrolStage extends Stage {
 				if (this.bounties.indexOf(t.name) > -1) return true;
 				// if bounty+chest: keep chests
 				if (prefs.bountiesAndChests && t.type == 'currency') return true;
+				// if bounty+ultra: keep ultras
+				if (prefs.bountiesAndUltras && (t.type == 'ultra' || t.type == 'ultra-pe')) return true;
 				// remove all else
 				return false;
 			}
@@ -414,17 +432,8 @@ class PatrolStage extends Stage {
 		this.updateLuckyDay();
 		
 		
-		// attack the first enemy
-		if (this.targets.length > 0) {
-			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
-			let target = this.targets[0];
-			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
-			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
-			this.enemy.type = target.type;
-			click(target.el);
-		}
 		// if the "i'm not a robot" captcha shows up, wait for user input
-		else if (this.captcha) {
+		if (this.captcha) {
 			log.log("🤖 I'm not a robot!");
 			this.luckyDayWait = 0;
 			if (GM_getValue('drb_captcha_solved') == GM_getValue('drb_captcha')) {
@@ -447,17 +456,28 @@ class PatrolStage extends Stage {
 					click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 				}
 			}
-		}
-		// if number if times "looking around" is higher then the max from preferences: travel
-		else if (this.scanned > prefs.maxScan) {
-			log.log('✈ Going somewhere else...');
-			click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
-		}
-		// look around for enemies
-		else {
-			this.scanned++;
-			log.log('🔎 Searching for enemies');
-			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink'));
+		} else {
+			// remove leftover modal dialog (from lucky day)
+			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
+			// attack the first enemy
+			if (this.targets.length > 0) {
+				let target = this.targets[0];
+				let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
+				log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
+				this.enemy.type = target.type;
+				click(target.el);
+			}
+			// if number if times "looking around" is higher then the max from preferences: travel
+			else if (this.scanned > prefs.maxScan) {
+				log.log('✈ Going somewhere else...');
+				click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
+			}
+			// look around for enemies
+			else {
+				this.scanned++;
+				log.log('🔎 Searching for enemies');
+				click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink'));
+			}
 		}
 	}
 }
@@ -475,15 +495,21 @@ class BattleStage extends Stage {
 	}
 	
 	updateActions() {
-		this.actions = {
-			attack: this.ui.page.querySelector('.actions .attacklink'),
-			special: this.ui.page.querySelector('.actions .speciallink'),
-			heavy: this.ui.page.querySelector('.actions .heavylink'),
-			super: this.ui.page.querySelector('.actions .superlink'),
-			cover: this.ui.page.querySelector('.actions .coverlink'),
-			run: this.ui.page.querySelector('.actions .runlink'),
-			respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
-		};
+		let actionsWrapper = this.ui.page.querySelector('.actionswrapper');
+		if (!actionsWrapper || actionsWrapper.querySelector('.list-block.actions').style.display=='none') {
+			this.actions = {};
+			actionsWrapper.querySelector('.list-block.actions').style.display = '';
+		} else {
+			this.actions = {
+				attack: this.ui.page.querySelector('.actions .attacklink'),
+				special: this.ui.page.querySelector('.actions .speciallink'),
+				heavy: this.ui.page.querySelector('.actions .heavylink'),
+				super: this.ui.page.querySelector('.actions .superlink'),
+				cover: this.ui.page.querySelector('.actions .coverlink'),
+				run: this.ui.page.querySelector('.actions .runlink'),
+				respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
+			};
+		}
 	}
 	
 	go() {
@@ -497,7 +523,7 @@ class BattleStage extends Stage {
 			if (this.actions.respawn) {
 				click(this.actions.respawn);
 			}
-		} else {
+		} else if (this.actions.run) {
 			log.log('🏆 Battle ended');
 			click(this.actions.run);
 		}
@@ -515,12 +541,12 @@ class BattleStage extends Stage {
 			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
-		else if (this.actions.super && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
+		else if (this.actions.super && (this.enemy.boss || prefs.ultraAll) && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
 			log.log('ULTRA ATTACK!');
 			click(this.actions.super);
 		}
 		// Heavy Attack -- bosses only, must have shield or more HP than twice our min damage
-		else if (this.actions.heavy && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
+		else if (this.actions.heavy && (this.enemy.boss || prefs.ultraAll) && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
 			log.log('Heavy Attack');
 			click(this.actions.heavy);
 		}

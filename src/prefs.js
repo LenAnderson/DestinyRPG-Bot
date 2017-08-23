@@ -17,6 +17,7 @@ let prefs = {
 	],
 	onlyBounties: true,
 	bountiesAndChests: true,
+	bountiesAndUltras: true,
 	
 	// battle
 	coverAt: 50,

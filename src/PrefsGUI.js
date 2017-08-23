@@ -24,6 +24,7 @@ class PrefsGUI {
 		this.dom.attack = toArray(this.body.querySelectorAll('[name="attack[]"]'));
 		this.dom.onlyBounties = this.body.querySelector('#onlyBounties');
 		this.dom.bountiesAndChests = this.body.querySelector('#bountiesAndChests');
+		this.dom.bountiesAndUltras = this.body.querySelector('#bountiesAndUltras');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
 		this.dom.heavyAll = this.body.querySelector('#heavyAll');

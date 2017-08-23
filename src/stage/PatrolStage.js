@@ -39,6 +39,8 @@ class PatrolStage extends Stage {
 				if (this.bounties.indexOf(t.name) > -1) return true;
 				// if bounty+chest: keep chests
 				if (prefs.bountiesAndChests && t.type == 'currency') return true;
+				// if bounty+ultra: keep ultras
+				if (prefs.bountiesAndUltras && (t.type == 'ultra' || t.type == 'ultra-pe')) return true;
 				// remove all else
 				return false;
 			}
