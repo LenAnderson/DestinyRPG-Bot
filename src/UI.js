@@ -3,12 +3,22 @@ class UI {
 		return $('body > .views > .view > .pages > .page.page-on-center') || $('body > .views > .view > .pages > .page[data-page="index-1"]');
 	}
 	get stage() {
-		let page = this.page;
-		if (page) {
-			return page.getAttribute('data-page').toLowerCase();
+		if (this.page) {
+			return this.page.getAttribute('data-page').toLowerCase();
 		}
+		return '';
 	}
 	get busy() {
-		return this.page.querySelector('.preloader-indicator-overlay') != null;
+		if (this.page) {
+			return this.page.querySelector('.preloader-indicator-overlay') != null;
+		}
+		return false;
+	}
+	get location() {
+		let el = $('body > .views > .view > .navbar > .navbar-inner.navbar-on-center > .center.sliding');
+		if (el) {
+			return el.textContent.trim().replace(/^Patrolling\s+/, '');
+		}
+		return '';
 	}
 }

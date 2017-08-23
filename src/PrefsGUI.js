@@ -26,8 +26,10 @@ class PrefsGUI {
 		this.dom.bountiesAndChests = this.body.querySelector('#bountiesAndChests');
 		this.dom.coverAt = this.body.querySelector('#coverAt');
 		this.dom.runAt = this.body.querySelector('#runAt');
+		this.dom.heavyAll = this.body.querySelector('#heavyAll');
+		this.dom.ultraAll = this.body.querySelector('#ultraAll');
 		
-		this.setDomValues()
+		this.setDomValues();
 		
 		
 		this.body.querySelector('#save').addEventListener('click', this.save.bind(this));

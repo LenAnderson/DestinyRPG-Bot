@@ -15,7 +15,7 @@ class PatrolStage extends Stage {
 	}
 	
 	updateBounties() {
-		this.bounties = toArray(document.querySelectorAll('#progressItems > .card')).filter(it=>{return it.textContent.search('Bounty:')>-1;}).map(it=>{return it.textContent.trim().replace(/^.+\d+\s*\/\s*\d+\s*(.+?)\s*\(.+$/, '$1');});
+		this.bounties = toArray(this.ui.page.querySelectorAll('#progressItems > .card')).filter(it=>{return it.textContent.search('Bounty:')>-1;}).map(it=>{return it.textContent.trim().replace(/^.+\d+\s*\/\s*\d+\s*(.+?)\s*\(.+$/, '$1');});
 	}
 	
 	updateTargets() {
@@ -106,17 +106,8 @@ class PatrolStage extends Stage {
 		this.updateLuckyDay();
 		
 		
-		// attack the first enemy
-		if (this.targets.length > 0) {
-			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
-			let target = this.targets[0];
-			let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
-			log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
-			this.enemy.type = target.type;
-			click(target.el);
-		}
 		// if the "i'm not a robot" captcha shows up, wait for user input
-		else if (this.captcha) {
+		if (this.captcha) {
 			log.log("🤖 I'm not a robot!");
 			this.luckyDayWait = 0;
 			if (GM_getValue('drb_captcha_solved') == GM_getValue('drb_captcha')) {
@@ -139,17 +130,28 @@ class PatrolStage extends Stage {
 					click((this.luckyDay.find((it)=>{return it.type==prefs.luckyDay;}) || this.luckyDay[0]).el);
 				}
 			}
-		}
-		// if number if times "looking around" is higher then the max from preferences: travel
-		else if (this.scanned > prefs.maxScan) {
-			log.log('✈ Going somewhere else...');
-			click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
-		}
-		// look around for enemies
-		else {
-			this.scanned++;
-			log.log('🔎 Searching for enemies');
-			click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink'));
+		} else {
+			// remove leftover modal dialog (from lucky day)
+			toArray($$('.actions-modal, .modal-overlay')).forEach((it) => { it.remove(); });
+			// attack the first enemy
+			if (this.targets.length > 0) {
+				let target = this.targets[0];
+				let hits = Math.ceil((target.health || target.shield) / this.player.minDamage);
+				log.log('⚔ Fighting ' + target.name + ' (' + target.type + ') [' + (target.health ? target.health+'HP' : target.shield+'SH') + '] [~' + hits + ' hits]');
+				this.enemy.type = target.type;
+				click(target.el);
+			}
+			// if number if times "looking around" is higher then the max from preferences: travel
+			else if (this.scanned > prefs.maxScan) {
+				log.log('✈ Going somewhere else...');
+				click(this.ui.page.querySelector('a[href*="changelocation.php"]'));
+			}
+			// look around for enemies
+			else {
+				this.scanned++;
+				log.log('🔎 Searching for enemies');
+				click(this.ui.page.querySelector('.page-content > .list-block > ul > li > a.nothinglink'));
+			}
 		}
 	}
 }

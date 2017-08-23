@@ -12,15 +12,21 @@ class BattleStage extends Stage {
 	}
 	
 	updateActions() {
-		this.actions = {
-			attack: this.ui.page.querySelector('.actions .attacklink'),
-			special: this.ui.page.querySelector('.actions .speciallink'),
-			heavy: this.ui.page.querySelector('.actions .heavylink'),
-			super: this.ui.page.querySelector('.actions .superlink'),
-			cover: this.ui.page.querySelector('.actions .coverlink'),
-			run: this.ui.page.querySelector('.actions .runlink'),
-			respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
-		};
+		let actionsWrapper = this.ui.page.querySelector('.actionswrapper');
+		if (!actionsWrapper || actionsWrapper.querySelector('.list-block.actions').style.display=='none') {
+			this.actions = {};
+			actionsWrapper.querySelector('.list-block.actions').style.display = '';
+		} else {
+			this.actions = {
+				attack: this.ui.page.querySelector('.actions .attacklink'),
+				special: this.ui.page.querySelector('.actions .speciallink'),
+				heavy: this.ui.page.querySelector('.actions .heavylink'),
+				super: this.ui.page.querySelector('.actions .superlink'),
+				cover: this.ui.page.querySelector('.actions .coverlink'),
+				run: this.ui.page.querySelector('.actions .runlink'),
+				respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
+			};
+		}
 	}
 	
 	go() {
@@ -34,7 +40,7 @@ class BattleStage extends Stage {
 			if (this.actions.respawn) {
 				click(this.actions.respawn);
 			}
-		} else {
+		} else if (this.actions.run) {
 			log.log('🏆 Battle ended');
 			click(this.actions.run);
 		}
@@ -52,12 +58,12 @@ class BattleStage extends Stage {
 			click(this.actions.cover);
 		}
 		// Ultra Attack -- bosses only, must have shield or more HP than four times our min damage
-		else if (this.actions.super && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
+		else if (this.actions.super && (this.enemy.boss || prefs.ultraAll) && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*4)) {
 			log.log('ULTRA ATTACK!');
 			click(this.actions.super);
 		}
 		// Heavy Attack -- bosses only, must have shield or more HP than twice our min damage
-		else if (this.actions.heavy && this.enemy.boss && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
+		else if (this.actions.heavy && (this.enemy.boss || prefs.ultraAll) && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
 			log.log('Heavy Attack');
 			click(this.actions.heavy);
 		}

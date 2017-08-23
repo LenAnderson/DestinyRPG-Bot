@@ -20,7 +20,9 @@ let prefs = {
 	
 	// battle
 	coverAt: 50,
-	runAt: 20
+	runAt: 20,
+	heavyAll: false,
+	ultraAll: false
 };
 let sprefs = JSON.parse(GM_getValue('drb_prefs')||'false');
 if (sprefs) {
