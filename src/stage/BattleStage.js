@@ -62,8 +62,8 @@ class BattleStage extends Stage {
 			log.log('ULTRA ATTACK!');
 			click(this.actions.super);
 		}
-		// Heavy Attack -- bosses only, must have shield or more HP than twice our min damage
-		else if (this.actions.heavy && (this.enemy.boss || prefs.ultraAll) && (this.enemy.shield > 0 || this.enemy.health > this.player.minDamage*2)) {
+		// Heavy Attack -- bosses only, must have more HP than twice our min damage
+		else if (this.actions.heavy && (this.enemy.boss || prefs.heavyAll) && this.enemy.health > this.player.minDamage*2) {
 			log.log('Heavy Attack');
 			click(this.actions.heavy);
 		}
