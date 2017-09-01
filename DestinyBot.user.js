@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      1.21
+// @version      2.0
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -352,7 +352,8 @@ class PatrolStage extends Stage {
 				health: after.querySelector('.item-media > img[src*="icon-hp3.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
 				shield: after.querySelector('.item-media > img[src*="icon-shield.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
 				// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
-				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
+				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1'),
+				ribbon: (a.querySelector('.ribbon')||{textContent:false}).textContent
 			}
 		}).filter((t) => {
 			// remove disabled
@@ -506,7 +507,7 @@ class BattleStage extends Stage {
 				heavy: this.ui.page.querySelector('.actions .heavylink'),
 				super: this.ui.page.querySelector('.actions .superlink'),
 				cover: this.ui.page.querySelector('.actions .coverlink'),
-				run: this.ui.page.querySelector('.actions .runlink'),
+				run: this.ui.page.querySelector('.actions .runlink') || this.ui.page.querySelector('.actions .patrollink'),
 				respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
 			};
 		}
@@ -579,6 +580,12 @@ class TravelStage extends Stage {
 	
 	updateLocations() {
 		this.locations = this.getOptions('location');
+		if (this.locations.length == 0) {
+			this.locations = [{
+				current: true,
+				title: 'Earth'
+			}];
+		}
 	}
 	updateRegions() {
 		this.regions = this.getOptions('region');

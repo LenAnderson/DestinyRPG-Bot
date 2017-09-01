@@ -23,7 +23,7 @@ class BattleStage extends Stage {
 				heavy: this.ui.page.querySelector('.actions .heavylink'),
 				super: this.ui.page.querySelector('.actions .superlink'),
 				cover: this.ui.page.querySelector('.actions .coverlink'),
-				run: this.ui.page.querySelector('.actions .runlink'),
+				run: this.ui.page.querySelector('.actions .runlink') || this.ui.page.querySelector('.actions .patrollink'),
 				respawn: this.ui.page.querySelector('.actions a[href*="index.php"]')
 			};
 		}
