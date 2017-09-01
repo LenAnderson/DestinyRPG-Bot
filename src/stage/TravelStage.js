@@ -13,6 +13,12 @@ class TravelStage extends Stage {
 	
 	updateLocations() {
 		this.locations = this.getOptions('location');
+		if (this.locations.length == 0) {
+			this.locations = [{
+				current: true,
+				title: 'Earth'
+			}];
+		}
 	}
 	updateRegions() {
 		this.regions = this.getOptions('region');

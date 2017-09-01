@@ -28,7 +28,8 @@ class PatrolStage extends Stage {
 				health: after.querySelector('.item-media > img[src*="icon-hp3.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
 				shield: after.querySelector('.item-media > img[src*="icon-shield.png"]') ? after.textContent.trim().replace(/,/g, '')*1 || 0 : 0,
 				// types: currency (chest/cache), ultra (white skull), ultra-pe (red skull)?
-				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1')
+				type: (a.querySelector('.item-content > .item-media > img') || {src:'normal'}).src.replace(/^.*icon-(.+?)\.png.*$/, '$1'),
+				ribbon: (a.querySelector('.ribbon')||{textContent:false}).textContent
 			}
 		}).filter((t) => {
 			// remove disabled
