@@ -10,7 +10,7 @@ class UI {
 	}
 	get busy() {
 		if (this.page) {
-			return this.page.querySelector('.preloader-indicator-overlay') != null;
+			return $('.preloader-indicator-overlay') != null;
 		}
 		return false;
 	}
