@@ -2,7 +2,7 @@
 // @name         DestinyRPG Bot
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/DestinyRPG-Bot/raw/master/DestinyBot.user.js
-// @version      2.0
+// @version      2.1
 // @author       LenAnderson
 // @match        https://game.destinyrpg.com/*
 // @match        https://test.destinyrpg.com/*
@@ -206,7 +206,7 @@ function getParams(url) {
 	}
 	get busy() {
 		if (this.page) {
-			return this.page.querySelector('.preloader-indicator-overlay') != null;
+			return $('.preloader-indicator-overlay') != null;
 		}
 		return false;
 	}
@@ -344,7 +344,7 @@ class PatrolStage extends Stage {
 	
 	updateTargets() {
 		this.updateBounties();
-		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a.initBattle')).map((a) => {
+		this.targets = toArray(this.ui.page.querySelectorAll('.page-content > .list-block > ul > li > a[data-enemyguid]')).map((a) => {
 			let after = a.querySelector('.item-content > .item-inner > .item-after');
 			return {
 				el: a,
@@ -358,6 +358,8 @@ class PatrolStage extends Stage {
 		}).filter((t) => {
 			// remove disabled
 			if (t.el.getAttribute('disabled')) return false;
+			// remove enemies without id
+			if (!t.el.getAttribute('data-enemyguid')) return false;
 			// if bounty-focus and active bounties...
 			if (prefs.onlyBounties && this.bounties.length > 0) {
 				// keep enemy with bounty
