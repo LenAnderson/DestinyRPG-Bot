@@ -1,3 +1,7 @@
+# Abandoned
+This script is no longer maintained and not working in the current version of the game.
+
+
 ## What is it?
 A bot for the game destinyrpg.com
 
